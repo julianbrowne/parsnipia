@@ -1,0 +1,32 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import App from "./App";
+
+describe("App", () => {
+  const originalFetch = globalThis.fetch;
+
+  beforeEach(() => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve("crossword\npuzzle\nparsnip\n"),
+    } as Response);
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("renders the heading and lets a user look up a word end-to-end", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "Parsnip" })).toBeInTheDocument();
+
+    await screen.findByText(/words loaded/i);
+    await user.type(screen.getByRole("textbox"), "crossword");
+    await user.click(screen.getByRole("button", { name: /check/i }));
+
+    expect(await screen.findByText(/is a valid word/i)).toBeInTheDocument();
+  });
+});

@@ -1,0 +1,101 @@
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import {
+  normalizeWord,
+  parseWordList,
+  createWordStore,
+  loadWordStore,
+} from "./wordStore";
+
+describe("normalizeWord", () => {
+  it("lower-cases the word", () => {
+    expect(normalizeWord("CROSSWORD")).toBe("crossword");
+  });
+
+  it("trims surrounding whitespace", () => {
+    expect(normalizeWord("  puzzle  ")).toBe("puzzle");
+  });
+});
+
+describe("parseWordList", () => {
+  it("parses one word per line", () => {
+    const words = parseWordList("apple\nbanana\ncherry");
+    expect(words).toEqual(new Set(["apple", "banana", "cherry"]));
+  });
+
+  it("ignores blank lines", () => {
+    const words = parseWordList("apple\n\n\nbanana\n");
+    expect(words).toEqual(new Set(["apple", "banana"]));
+  });
+
+  it("ignores comment lines starting with #", () => {
+    const raw = ["# a header comment", "# another comment", "apple", "banana"].join(
+      "\n",
+    );
+    expect(parseWordList(raw)).toEqual(new Set(["apple", "banana"]));
+  });
+
+  it("returns an empty set for an empty file", () => {
+    expect(parseWordList("")).toEqual(new Set());
+  });
+});
+
+describe("createWordStore", () => {
+  const store = createWordStore(new Set(["apple", "banana", "crossword"]));
+
+  it("reports its size", () => {
+    expect(store.size).toBe(3);
+  });
+
+  it("finds words that are present", () => {
+    expect(store.has("apple")).toBe(true);
+  });
+
+  it("reports words that are absent as false", () => {
+    expect(store.has("zzyzx")).toBe(false);
+  });
+
+  it("is case-insensitive", () => {
+    expect(store.has("CROSSWORD")).toBe(true);
+    expect(store.has("CrossWord")).toBe(true);
+  });
+
+  it("ignores surrounding whitespace", () => {
+    expect(store.has("  banana  ")).toBe(true);
+  });
+});
+
+describe("loadWordStore", () => {
+  const originalFetch = globalThis.fetch;
+
+  beforeEach(() => {
+    globalThis.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("fetches the word list and builds a store from it", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve("apple\nbanana\n"),
+    } as Response);
+
+    const store = await loadWordStore("/data/test-words.txt");
+
+    expect(globalThis.fetch).toHaveBeenCalledWith("/data/test-words.txt");
+    expect(store.has("apple")).toBe(true);
+    expect(store.has("banana")).toBe(true);
+    expect(store.has("cherry")).toBe(false);
+  });
+
+  it("throws if the fetch response is not ok", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      statusText: "Not Found",
+    } as Response);
+
+    await expect(loadWordStore("/data/missing.txt")).rejects.toThrow(/404/);
+  });
+});
