@@ -29,7 +29,18 @@ describe("WordLookup", () => {
     mockedLoadWordStore.mockReturnValue(new Promise(() => {}));
     render(<WordLookup />);
     expect(screen.getByRole("textbox")).toBeDisabled();
+    expect(screen.getByRole("combobox")).toBeDisabled();
     expect(screen.getByRole("button", { name: /check/i })).toBeDisabled();
+  });
+
+  it("offers Solve as the (only, for now) dropdown option, selected by default", async () => {
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["parsnip"])));
+    render(<WordLookup />);
+
+    await screen.findByText(/words loaded/i);
+    const select = screen.getByRole("combobox") as HTMLSelectElement;
+    expect(select.value).toBe("solve");
+    expect(screen.getByRole("option", { name: "Solve" })).toBeInTheDocument();
   });
 
   it("reports a known word as valid", async () => {
@@ -67,6 +78,36 @@ describe("WordLookup", () => {
     await user.click(screen.getByRole("button", { name: /check/i }));
 
     expect(await screen.findByText(/enter a word/i)).toBeInTheDocument();
+  });
+
+  it("lists every match for a pattern containing ?", async () => {
+    mockedLoadWordStore.mockResolvedValue(
+      createWordStore(new Set(["cat", "cot", "cut", "dog"])),
+    );
+    const user = userEvent.setup();
+    render(<WordLookup />);
+
+    await screen.findByText(/words loaded/i);
+    await user.type(screen.getByRole("textbox"), "c?t");
+    await user.click(screen.getByRole("button", { name: /check/i }));
+
+    expect(await screen.findByText(/3 words match/i)).toBeInTheDocument();
+    expect(screen.getByText("cat")).toBeInTheDocument();
+    expect(screen.getByText("cot")).toBeInTheDocument();
+    expect(screen.getByText("cut")).toBeInTheDocument();
+    expect(screen.queryByText("dog")).not.toBeInTheDocument();
+  });
+
+  it("reports when nothing matches a pattern containing ?", async () => {
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["cat"])));
+    const user = userEvent.setup();
+    render(<WordLookup />);
+
+    await screen.findByText(/words loaded/i);
+    await user.type(screen.getByRole("textbox"), "z?z");
+    await user.click(screen.getByRole("button", { name: /check/i }));
+
+    expect(await screen.findByText(/no words match/i)).toBeInTheDocument();
   });
 
   it("shows an error if the dictionary fails to load", async () => {

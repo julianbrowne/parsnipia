@@ -1,16 +1,29 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { loadWordStore, normalizeWord, type WordStore } from "../wordStore/wordStore";
 
+/**
+ * The operation the Check button performs, chosen from the dropdown.
+ * Only "solve" exists today; more (anagram, thesaurus, ...) will join it.
+ */
+type Mode = "solve";
+
 type LoadState =
   | { status: "loading" }
   | { status: "error"; message: string }
   | { status: "ready"; store: WordStore };
 
-type Result = { word: string; found: boolean } | null;
+type Result =
+  | { kind: "single"; word: string; found: boolean }
+  | { kind: "matches"; pattern: string; matches: string[] }
+  | null;
+
+/** Cap how many matches we render, so a wide-open pattern like "?????" doesn't flood the page. */
+const MAX_DISPLAYED_MATCHES = 200;
 
 export function WordLookup() {
   const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
   const [input, setInput] = useState("");
+  const [mode, setMode] = useState<Mode>("solve");
   const [result, setResult] = useState<Result>(null);
   const [hint, setHint] = useState<string | null>(null);
 
@@ -38,15 +51,25 @@ export function WordLookup() {
     event.preventDefault();
     if (loadState.status !== "ready") return;
 
-    const word = normalizeWord(input);
-    if (word === "") {
+    const entry = normalizeWord(input);
+    if (entry === "") {
       setHint("Enter a word to check.");
       setResult(null);
       return;
     }
 
     setHint(null);
-    setResult({ word, found: loadState.store.has(word) });
+    const store = loadState.store;
+
+    switch (mode) {
+      case "solve":
+        setResult(
+          entry.includes("?")
+            ? { kind: "matches", pattern: entry, matches: store.findMatches(entry) }
+            : { kind: "single", word: entry, found: store.has(entry) },
+        );
+        break;
+    }
   }
 
   const isReady = loadState.status === "ready";
@@ -61,7 +84,7 @@ export function WordLookup() {
           id="word-input"
           className="word-lookup__input"
           type="text"
-          placeholder="Enter a word…"
+          placeholder="Enter a word, or use ? for unknown letters…"
           value={input}
           onChange={(event) => setInput(event.target.value)}
           disabled={!isReady}
@@ -69,6 +92,18 @@ export function WordLookup() {
           autoCapitalize="off"
           spellCheck={false}
         />
+        <label htmlFor="word-lookup-mode" className="visually-hidden">
+          Operation
+        </label>
+        <select
+          id="word-lookup-mode"
+          className="word-lookup__select"
+          value={mode}
+          onChange={(event) => setMode(event.target.value as Mode)}
+          disabled={!isReady}
+        >
+          <option value="solve">Solve</option>
+        </select>
         <button type="submit" className="word-lookup__submit" disabled={!isReady}>
           Check
         </button>
@@ -92,7 +127,7 @@ export function WordLookup() {
         </p>
       )}
 
-      {loadState.status === "ready" && !hint && result && (
+      {loadState.status === "ready" && !hint && result?.kind === "single" && (
         <p
           role="status"
           className={
@@ -105,6 +140,37 @@ export function WordLookup() {
             ? `✓ “${result.word}” is a valid word.`
             : `✗ “${result.word}” was not found in the dictionary.`}
         </p>
+      )}
+
+      {loadState.status === "ready" && !hint && result?.kind === "matches" && (
+        <div
+          role="status"
+          className={
+            result.matches.length > 0
+              ? "word-lookup__status word-lookup__status--found"
+              : "word-lookup__status word-lookup__status--not-found"
+          }
+        >
+          {result.matches.length === 0 ? (
+            <p>✗ No words match “{result.pattern}”.</p>
+          ) : (
+            <>
+              <p>
+                ✓ {result.matches.length} word{result.matches.length === 1 ? "" : "s"}{" "}
+                match “{result.pattern}”
+                {result.matches.length > MAX_DISPLAYED_MATCHES
+                  ? ` (showing first ${MAX_DISPLAYED_MATCHES})`
+                  : ""}
+                :
+              </p>
+              <ul className="word-lookup__matches">
+                {result.matches.slice(0, MAX_DISPLAYED_MATCHES).map((word) => (
+                  <li key={word}>{word}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
       )}
 
       {loadState.status === "ready" && (

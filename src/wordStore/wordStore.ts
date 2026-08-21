@@ -10,6 +10,12 @@ export interface WordStore {
   readonly size: number;
   /** Whether `word` (case-insensitively) is a known word. */
   has(word: string): boolean;
+  /**
+   * All known words matching `pattern` (case-insensitively), where `?`
+   * matches any single letter. Matches must be the same length as
+   * `pattern`. Returned in alphabetical order.
+   */
+  findMatches(pattern: string): string[];
 }
 
 /**
@@ -19,6 +25,22 @@ export interface WordStore {
  */
 export function normalizeWord(word: string): string {
   return word.trim().toLowerCase();
+}
+
+function escapeRegExpChar(char: string): string {
+  return char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Builds a regular expression matching words of the same shape as
+ * `pattern`, where `?` stands in for any single letter.
+ */
+function patternToRegExp(pattern: string): RegExp {
+  const source = pattern
+    .split("")
+    .map((char) => (char === "?" ? "." : escapeRegExpChar(char)))
+    .join("");
+  return new RegExp(`^${source}$`);
 }
 
 /**
@@ -44,6 +66,17 @@ export function createWordStore(words: Set<string>): WordStore {
     },
     has(word: string) {
       return words.has(normalizeWord(word));
+    },
+    findMatches(pattern: string) {
+      const normalized = normalizeWord(pattern);
+      const regexp = patternToRegExp(normalized);
+      const matches: string[] = [];
+      for (const word of words) {
+        if (word.length === normalized.length && regexp.test(word)) {
+          matches.push(word);
+        }
+      }
+      return matches.sort();
     },
   };
 }

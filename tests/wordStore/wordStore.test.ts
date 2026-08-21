@@ -64,6 +64,42 @@ describe("createWordStore", () => {
   });
 });
 
+describe("findMatches", () => {
+  const store = createWordStore(
+    new Set(["cat", "cot", "cut", "cart", "cats", "dog"]),
+  );
+
+  it("finds every word matching a pattern with a single wildcard", () => {
+    expect(store.findMatches("c?t")).toEqual(["cat", "cot", "cut"]);
+  });
+
+  it("finds every word matching a pattern with multiple wildcards", () => {
+    expect(store.findMatches("?a?")).toEqual(["cat"]);
+  });
+
+  it("only matches words of the same length", () => {
+    expect(store.findMatches("c?rt")).toEqual(["cart"]);
+    expect(store.findMatches("c?ts")).toEqual(["cats"]);
+  });
+
+  it("is case-insensitive", () => {
+    expect(store.findMatches("C?T")).toEqual(["cat", "cot", "cut"]);
+  });
+
+  it("returns an exact match when the pattern has no wildcards", () => {
+    expect(store.findMatches("dog")).toEqual(["dog"]);
+  });
+
+  it("returns an empty array when nothing matches", () => {
+    expect(store.findMatches("z?z")).toEqual([]);
+  });
+
+  it("treats regex-special characters in the pattern literally", () => {
+    expect(store.findMatches("c.t")).toEqual([]);
+    expect(store.findMatches("c*t")).toEqual([]);
+  });
+});
+
 describe("loadWordStore", () => {
   const originalFetch = globalThis.fetch;
 

@@ -29,6 +29,20 @@
   outline-offset: 1px;
 }
 
+.word-lookup__select {
+  font: inherit;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.word-lookup__select:focus-visible {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 1px;
+}
+
 .word-lookup__submit {
   font: inherit;
   font-weight: 500;
@@ -69,6 +83,18 @@
 .word-lookup__status--hint {
   background: var(--code-bg);
   color: var(--text);
+}
+
+.word-lookup__matches {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  columns: 2;
+}
+
+@media (max-width: 480px) {
+  .word-lookup__matches {
+    columns: 1;
+  }
 }
 
 .word-lookup__count {
