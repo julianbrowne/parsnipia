@@ -4,7 +4,7 @@ import {
   parseWordList,
   createWordStore,
   loadWordStore,
-} from "./wordStore";
+} from "../../src/wordStore/wordStore";
 
 describe("normalizeWord", () => {
   it("lower-cases the word", () => {

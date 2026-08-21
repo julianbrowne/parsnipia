@@ -1,0 +1,33 @@
+.toolbar {
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar__inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.toolbar__start {
+  /* Reserved for a logo and menus later. */
+  flex: 1;
+}
+
+.toolbar__end {
+  display: flex;
+  gap: 16px;
+}
+
+.toolbar__link {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.toolbar__link:hover {
+  color: var(--text-h);
+}

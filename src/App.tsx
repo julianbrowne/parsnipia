@@ -1,12 +1,16 @@
+import { Toolbar } from "./Toolbar/Toolbar";
 import { WordLookup } from "./WordLookup/WordLookup";
 import "./App.css";
 
 function App() {
   return (
     <>
-      <h1>Parsnip</h1>
-      <p className="tagline">A crossword solver's friend</p>
-      <WordLookup />
+      <Toolbar />
+      <main className="page">
+        <h1>Parsnip</h1>
+        <p className="tagline">A crossword solver's friend</p>
+        <WordLookup />
+      </main>
     </>
   );
 }

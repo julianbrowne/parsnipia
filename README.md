@@ -43,6 +43,15 @@ npm run build      # type-check and build for production
 npm run lint       # lint with oxlint
 ```
 
+Tests live in [`tests/`](tests) (mirroring the structure of `src/`), not
+alongside the source files. Running `npm test` also writes
+`public/tests/results.json`, which [`public/tests/index.html`](public/tests/index.html) —
+a small hand-written report page, not generated — renders into a
+browsable pass/fail summary. It's linked from the toolbar's "Tests" link
+in the top right of the app, and links back to the app in turn. Since
+`results.json` is a build artifact (gitignored), run `npm test` at least
+once after cloning before opening the report locally.
+
 ## Deployment
 
 The app is built with Vite and deployed to GitHub Pages, served from

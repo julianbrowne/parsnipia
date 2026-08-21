@@ -1,11 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { WordLookup } from "./WordLookup";
-import { createWordStore, loadWordStore } from "../wordStore/wordStore";
+import { WordLookup } from "../../src/WordLookup/WordLookup";
+import { createWordStore, loadWordStore } from "../../src/wordStore/wordStore";
 
-vi.mock("../wordStore/wordStore", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../wordStore/wordStore")>();
+vi.mock("../../src/wordStore/wordStore", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../src/wordStore/wordStore")>();
   return {
     ...actual,
     loadWordStore: vi.fn(),

@@ -49,15 +49,23 @@
 }
 
 #root {
-  max-width: 640px;
-  margin: 0 auto;
   min-height: 100svh;
-  box-sizing: border-box;
-  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
   margin: 0;
+}
+
+/* The toolbar spans the full width; page content stays in a centered
+   column of this width so it lines up with the toolbar's own content. */
+.page {
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0 24px;
 }
 
 h1,
