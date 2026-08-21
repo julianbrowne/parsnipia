@@ -3,9 +3,9 @@ import { loadWordStore, normalizeWord, type WordStore } from "../wordStore/wordS
 
 /**
  * The operation the Check button performs, chosen from the dropdown.
- * Only "solve" exists today; more (anagram, thesaurus, ...) will join it.
+ * More (thesaurus, ...) will join these later.
  */
-type Mode = "solve";
+type Mode = "solve" | "anagram";
 
 type LoadState =
   | { status: "loading" }
@@ -14,8 +14,20 @@ type LoadState =
 
 type Result =
   | { kind: "single"; word: string; found: boolean }
-  | { kind: "matches"; pattern: string; matches: string[] }
+  | { kind: "matches"; mode: Mode; input: string; matches: string[] }
   | null;
+
+/** Copy that varies by mode when rendering a list of matches. */
+const MODE_COPY: Record<Mode, { noneFound: (input: string) => string; joiner: string }> = {
+  solve: {
+    noneFound: (input) => `✗ No words match “${input}”.`,
+    joiner: "match",
+  },
+  anagram: {
+    noneFound: (input) => `✗ No anagrams found for “${input}”.`,
+    joiner: "are anagrams of",
+  },
+};
 
 /** Cap how many matches we render, so a wide-open pattern like "?????" doesn't flood the page. */
 const MAX_DISPLAYED_MATCHES = 200;
@@ -65,9 +77,12 @@ export function WordLookup() {
       case "solve":
         setResult(
           entry.includes("?")
-            ? { kind: "matches", pattern: entry, matches: store.findMatches(entry) }
+            ? { kind: "matches", mode, input: entry, matches: store.findMatches(entry) }
             : { kind: "single", word: entry, found: store.has(entry) },
         );
+        break;
+      case "anagram":
+        setResult({ kind: "matches", mode, input: entry, matches: store.findAnagrams(entry) });
         break;
     }
   }
@@ -103,6 +118,7 @@ export function WordLookup() {
           disabled={!isReady}
         >
           <option value="solve">Solve</option>
+          <option value="anagram">Anagram</option>
         </select>
         <button type="submit" className="word-lookup__submit" disabled={!isReady}>
           Check
@@ -152,12 +168,12 @@ export function WordLookup() {
           }
         >
           {result.matches.length === 0 ? (
-            <p>✗ No words match “{result.pattern}”.</p>
+            <p>{MODE_COPY[result.mode].noneFound(result.input)}</p>
           ) : (
             <>
               <p>
                 ✓ {result.matches.length} word{result.matches.length === 1 ? "" : "s"}{" "}
-                match “{result.pattern}”
+                {MODE_COPY[result.mode].joiner} “{result.input}”
                 {result.matches.length > MAX_DISPLAYED_MATCHES
                   ? ` (showing first ${MAX_DISPLAYED_MATCHES})`
                   : ""}

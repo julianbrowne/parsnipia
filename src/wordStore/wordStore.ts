@@ -16,6 +16,13 @@ export interface WordStore {
    * `pattern`. Returned in alphabetical order.
    */
   findMatches(pattern: string): string[];
+  /**
+   * All known words (case-insensitively) that can be formed by
+   * rearranging `letters`, where `?` stands in for any single letter.
+   * Matches must be the same length as `letters`. Returned in
+   * alphabetical order.
+   */
+  findAnagrams(letters: string): string[];
 }
 
 /**
@@ -41,6 +48,32 @@ function patternToRegExp(pattern: string): RegExp {
     .map((char) => (char === "?" ? "." : escapeRegExpChar(char)))
     .join("");
   return new RegExp(`^${source}$`);
+}
+
+/** Counts occurrences of each character in `text`. */
+function countLetters(text: string): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const char of text) {
+    counts.set(char, (counts.get(char) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/**
+ * Whether `word` contains at least as many of each letter as `required`
+ * calls for. An empty `required` (all wildcards) matches any word.
+ */
+function containsRequiredLetters(word: string, required: Map<string, number>): boolean {
+  if (required.size === 0) {
+    return true;
+  }
+  const wordCounts = countLetters(word);
+  for (const [char, count] of required) {
+    if ((wordCounts.get(char) ?? 0) < count) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -73,6 +106,17 @@ export function createWordStore(words: Set<string>): WordStore {
       const matches: string[] = [];
       for (const word of words) {
         if (word.length === normalized.length && regexp.test(word)) {
+          matches.push(word);
+        }
+      }
+      return matches.sort();
+    },
+    findAnagrams(letters: string) {
+      const normalized = normalizeWord(letters);
+      const required = countLetters(normalized.replace(/\?/g, ""));
+      const matches: string[] = [];
+      for (const word of words) {
+        if (word.length === normalized.length && containsRequiredLetters(word, required)) {
           matches.push(word);
         }
       }

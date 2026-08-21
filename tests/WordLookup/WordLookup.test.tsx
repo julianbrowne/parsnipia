@@ -33,7 +33,7 @@ describe("WordLookup", () => {
     expect(screen.getByRole("button", { name: /check/i })).toBeDisabled();
   });
 
-  it("offers Solve as the (only, for now) dropdown option, selected by default", async () => {
+  it("offers Solve and Anagram, with Solve selected by default", async () => {
     mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["parsnip"])));
     render(<WordLookup />);
 
@@ -41,6 +41,7 @@ describe("WordLookup", () => {
     const select = screen.getByRole("combobox") as HTMLSelectElement;
     expect(select.value).toBe("solve");
     expect(screen.getByRole("option", { name: "Solve" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Anagram" })).toBeInTheDocument();
   });
 
   it("reports a known word as valid", async () => {
@@ -108,6 +109,57 @@ describe("WordLookup", () => {
     await user.click(screen.getByRole("button", { name: /check/i }));
 
     expect(await screen.findByText(/no words match/i)).toBeInTheDocument();
+  });
+
+  it("finds anagrams of a word with no wildcards", async () => {
+    mockedLoadWordStore.mockResolvedValue(
+      createWordStore(new Set(["cat", "act", "tac", "dog"])),
+    );
+    const user = userEvent.setup();
+    render(<WordLookup />);
+
+    await screen.findByText(/words loaded/i);
+    await user.selectOptions(screen.getByRole("combobox"), "anagram");
+    await user.type(screen.getByRole("textbox"), "cat");
+    await user.click(screen.getByRole("button", { name: /check/i }));
+
+    expect(await screen.findByText(/3 words are anagrams of/i)).toBeInTheDocument();
+    expect(screen.getByText("act")).toBeInTheDocument();
+    expect(screen.getByText("cat")).toBeInTheDocument();
+    expect(screen.getByText("tac")).toBeInTheDocument();
+    expect(screen.queryByText("dog")).not.toBeInTheDocument();
+  });
+
+  it("treats ? as a wildcard letter when finding anagrams", async () => {
+    mockedLoadWordStore.mockResolvedValue(
+      createWordStore(new Set(["cat", "act", "cot", "dog"])),
+    );
+    const user = userEvent.setup();
+    render(<WordLookup />);
+
+    await screen.findByText(/words loaded/i);
+    await user.selectOptions(screen.getByRole("combobox"), "anagram");
+    await user.type(screen.getByRole("textbox"), "c?t");
+    await user.click(screen.getByRole("button", { name: /check/i }));
+
+    expect(await screen.findByText(/3 words are anagrams of/i)).toBeInTheDocument();
+    expect(screen.getByText("act")).toBeInTheDocument();
+    expect(screen.getByText("cat")).toBeInTheDocument();
+    expect(screen.getByText("cot")).toBeInTheDocument();
+    expect(screen.queryByText("dog")).not.toBeInTheDocument();
+  });
+
+  it("reports when no anagrams are found", async () => {
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["cat"])));
+    const user = userEvent.setup();
+    render(<WordLookup />);
+
+    await screen.findByText(/words loaded/i);
+    await user.selectOptions(screen.getByRole("combobox"), "anagram");
+    await user.type(screen.getByRole("textbox"), "xyz");
+    await user.click(screen.getByRole("button", { name: /check/i }));
+
+    expect(await screen.findByText(/no anagrams found/i)).toBeInTheDocument();
   });
 
   it("shows an error if the dictionary fails to load", async () => {

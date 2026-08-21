@@ -100,6 +100,48 @@ describe("findMatches", () => {
   });
 });
 
+describe("findAnagrams", () => {
+  const store = createWordStore(
+    new Set(["cat", "act", "tac", "cot", "tick", "kit", "dog", "cats", "cast"]),
+  );
+
+  it("finds every rearrangement of the exact letters when there are no wildcards", () => {
+    expect(store.findAnagrams("cat")).toEqual(["act", "cat", "tac"]);
+  });
+
+  it("is case-insensitive", () => {
+    expect(store.findAnagrams("CAT")).toEqual(["act", "cat", "tac"]);
+  });
+
+  it("only matches words of the same length", () => {
+    expect(store.findAnagrams("cats")).toEqual(["cast", "cats"]);
+  });
+
+  it("treats ? as a wildcard letter that can be anything", () => {
+    // one wildcard: any 3-letter word containing at least a 'c' and a 't'
+    expect(store.findAnagrams("c?t")).toEqual(["act", "cat", "cot", "tac"]);
+  });
+
+  it("lets multiple wildcards each stand in for any letter", () => {
+    // both letters unknown: matches every known 3-letter word
+    expect(store.findAnagrams("??t")).toEqual(["act", "cat", "cot", "kit", "tac"]);
+  });
+
+  it("matches every word of the right length when the input is all wildcards", () => {
+    expect(store.findAnagrams("???")).toEqual(["act", "cat", "cot", "dog", "kit", "tac"]);
+  });
+
+  it("returns an empty array when nothing matches", () => {
+    expect(store.findAnagrams("xyz")).toEqual([]);
+  });
+
+  it("requires enough of a repeated fixed letter, not just its presence", () => {
+    const repeats = createWordStore(new Set(["eave", "code"]));
+    // fixed letters are "e", "e" (2 wildcards) — needs at least two e's
+    expect(repeats.findAnagrams("ee??")).toEqual(["eave"]);
+  });
+});
+
 describe("loadWordStore", () => {
   const originalFetch = globalThis.fetch;
 
