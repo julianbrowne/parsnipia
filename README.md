@@ -10,9 +10,16 @@ letters — some of which may be `?` for an unknown letter — and offer:
 
 ## This version
 
-The only functionality so far is the first building block: enter a UK
-English word and check whether it's in the word store, or be told it isn't
-a recognised word.
+- Enter a UK English word (optionally with `?` wildcards) and either check
+  whether it's in the word store, list every word matching the pattern, or
+  list every anagram of it (with `?`s as blank tiles) — the **Solve** and
+  **Anagram** options in the dropdown next to Check.
+- Enter a full cryptic clue and get back a list of candidate wordplay
+  strategies: every word or phrase in the clue that's a known cryptic
+  indicator, highlighted in place, alongside a plain-English explanation
+  of what kind of wordplay it suggests (anagram, hidden word, reversal,
+  container, insertion, deletion, homophone, alternation). Ambiguous
+  indicators (most of them, in practice) surface every interpretation.
 
 ## Word source
 
@@ -31,6 +38,29 @@ To refresh the word list (e.g. to pick up SCOWL updates, or change its size
 ```sh
 npm run fetch-wordlist
 ```
+
+## Cryptic indicator source
+
+Wordplay indicators come from ["Cryptic Crosswords"](https://cryptics.georgeho.org)
+by George Ho — a database of clues and the indicator words/phrases within
+them, tagged by wordplay type — licensed under the
+[Open Database License (ODbL) v1.0](https://opendatacommons.org/licenses/odbl/1-0/).
+[`scripts/fetch-cryptic-indicators.mjs`](scripts/fetch-cryptic-indicators.mjs)
+streams the *complete* `indicators` table (its own JSON API paginates at
+100 rows, well short of the ~15,700 total — the script uses Datasette's
+`?_stream=on` CSV export instead to get all of them) into
+[`public/data/cryptic-indicators.tsv`](public/data/cryptic-indicators.tsv).
+See the license notice embedded at the top of that file — ODbL requires
+attribution and share-alike for anything built from this data. To refresh
+it:
+
+```sh
+npm run fetch-cryptic-indicators
+```
+
+This one's slow (the server streams the whole table over the course of a
+minute or two) — it's not part of `npm run build` or CI, only run by hand
+when the source data needs refreshing.
 
 ## Development
 

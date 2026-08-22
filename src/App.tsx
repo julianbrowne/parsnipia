@@ -1,5 +1,6 @@
 import { Toolbar } from "./Toolbar/Toolbar";
 import { WordLookup } from "./WordLookup/WordLookup";
+import { CrypticClue } from "./CrypticClue/CrypticClue";
 import "./App.css";
 
 function App() {
@@ -10,6 +11,8 @@ function App() {
         <h1>Parsnip</h1>
         <p className="tagline">A crossword solver's friend</p>
         <WordLookup />
+        <h2 className="section-heading">Cryptic clue strategies</h2>
+        <CrypticClue />
       </main>
     </>
   );

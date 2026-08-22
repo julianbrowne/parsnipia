@@ -24,9 +24,20 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "Parsnip" })).toBeInTheDocument();
 
     await screen.findByText(/words loaded/i);
-    await user.type(screen.getByRole("textbox"), "crossword");
+    await user.type(screen.getByRole("textbox", { name: /word to look up/i }), "crossword");
     await user.click(screen.getByRole("button", { name: /check/i }));
 
     expect(await screen.findByText(/is a valid word/i)).toBeInTheDocument();
+  });
+
+  it("also mounts the cryptic clue strategy finder", async () => {
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", { name: /cryptic clue strategies/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /find strategies/i }),
+    ).toBeInTheDocument();
   });
 });
