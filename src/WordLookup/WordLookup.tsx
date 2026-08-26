@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { loadWordStore, normalizeWord, type WordStore } from "../wordStore/wordStore";
 
 /**
- * The operation the Check button performs, chosen from the dropdown.
+ * The operation the Check button performs, chosen from the radio group.
  * More (thesaurus, ...) will join these later.
  */
 type Mode = "solve" | "anagram";
@@ -92,37 +92,49 @@ export function WordLookup() {
   return (
     <div className="word-lookup">
       <form className="word-lookup__form" onSubmit={handleSubmit}>
-        <label htmlFor="word-input" className="visually-hidden">
-          Word to look up
-        </label>
-        <input
-          id="word-input"
-          className="word-lookup__input"
-          type="text"
-          placeholder="Enter a word, or use ? for unknown letters…"
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          disabled={!isReady}
-          autoComplete="off"
-          autoCapitalize="off"
-          spellCheck={false}
-        />
-        <label htmlFor="word-lookup-mode" className="visually-hidden">
-          Operation
-        </label>
-        <select
-          id="word-lookup-mode"
-          className="word-lookup__select"
-          value={mode}
-          onChange={(event) => setMode(event.target.value as Mode)}
-          disabled={!isReady}
-        >
-          <option value="solve">Solve</option>
-          <option value="anagram">Anagram</option>
-        </select>
-        <button type="submit" className="word-lookup__submit" disabled={!isReady}>
-          Check
-        </button>
+        <div className="word-lookup__row">
+          <label htmlFor="word-input" className="visually-hidden">
+            Word to look up
+          </label>
+          <input
+            id="word-input"
+            className="word-lookup__input"
+            type="text"
+            placeholder="Enter a word, or use ? for unknown letters…"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            disabled={!isReady}
+            autoComplete="off"
+            autoCapitalize="off"
+            spellCheck={false}
+          />
+          <button type="submit" className="word-lookup__submit" disabled={!isReady}>
+            Check
+          </button>
+        </div>
+        <fieldset className="word-lookup__mode" disabled={!isReady}>
+          <legend className="visually-hidden">Operation</legend>
+          <label className="word-lookup__radio">
+            <input
+              type="radio"
+              name="word-lookup-mode"
+              value="solve"
+              checked={mode === "solve"}
+              onChange={() => setMode("solve")}
+            />
+            Solve
+          </label>
+          <label className="word-lookup__radio">
+            <input
+              type="radio"
+              name="word-lookup-mode"
+              value="anagram"
+              checked={mode === "anagram"}
+              onChange={() => setMode("anagram")}
+            />
+            Anagram
+          </label>
+        </fieldset>
       </form>
 
       {loadState.status === "loading" && (

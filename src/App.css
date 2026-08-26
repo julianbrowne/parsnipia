@@ -5,7 +5,13 @@
 
 .section-heading {
   font-size: 20px;
-  margin: 40px 0 12px;
+  margin: 0 0 12px;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0 24px;
 }
 
 .word-lookup {
@@ -15,6 +21,12 @@
 }
 
 .word-lookup__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.word-lookup__row {
   display: flex;
   gap: 8px;
 }
@@ -34,18 +46,27 @@
   outline-offset: 1px;
 }
 
-.word-lookup__select {
-  font: inherit;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-h);
+.word-lookup__mode {
+  display: flex;
+  gap: 20px;
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
-.word-lookup__select:focus-visible {
-  outline: 2px solid var(--accent-border);
-  outline-offset: 1px;
+.word-lookup__radio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.word-lookup__mode:disabled .word-lookup__radio,
+.word-lookup__radio:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .word-lookup__submit {

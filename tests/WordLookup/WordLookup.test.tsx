@@ -29,19 +29,19 @@ describe("WordLookup", () => {
     mockedLoadWordStore.mockReturnValue(new Promise(() => {}));
     render(<WordLookup />);
     expect(screen.getByRole("textbox")).toBeDisabled();
-    expect(screen.getByRole("combobox")).toBeDisabled();
+    for (const radio of screen.getAllByRole("radio")) {
+      expect(radio).toBeDisabled();
+    }
     expect(screen.getByRole("button", { name: /check/i })).toBeDisabled();
   });
 
-  it("offers Solve and Anagram, with Solve selected by default", async () => {
+  it("offers Solve and Anagram radio options, with Solve selected by default", async () => {
     mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["parsnip"])));
     render(<WordLookup />);
 
     await screen.findByText(/words loaded/i);
-    const select = screen.getByRole("combobox") as HTMLSelectElement;
-    expect(select.value).toBe("solve");
-    expect(screen.getByRole("option", { name: "Solve" })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "Anagram" })).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "Solve" })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "Anagram" })).not.toBeChecked();
   });
 
   it("reports a known word as valid", async () => {
@@ -119,7 +119,7 @@ describe("WordLookup", () => {
     render(<WordLookup />);
 
     await screen.findByText(/words loaded/i);
-    await user.selectOptions(screen.getByRole("combobox"), "anagram");
+    await user.click(screen.getByRole("radio", { name: "Anagram" }));
     await user.type(screen.getByRole("textbox"), "cat");
     await user.click(screen.getByRole("button", { name: /check/i }));
 
@@ -138,7 +138,7 @@ describe("WordLookup", () => {
     render(<WordLookup />);
 
     await screen.findByText(/words loaded/i);
-    await user.selectOptions(screen.getByRole("combobox"), "anagram");
+    await user.click(screen.getByRole("radio", { name: "Anagram" }));
     await user.type(screen.getByRole("textbox"), "c?t");
     await user.click(screen.getByRole("button", { name: /check/i }));
 
@@ -155,7 +155,7 @@ describe("WordLookup", () => {
     render(<WordLookup />);
 
     await screen.findByText(/words loaded/i);
-    await user.selectOptions(screen.getByRole("combobox"), "anagram");
+    await user.click(screen.getByRole("radio", { name: "Anagram" }));
     await user.type(screen.getByRole("textbox"), "xyz");
     await user.click(screen.getByRole("button", { name: /check/i }));
 
