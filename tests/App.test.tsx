@@ -23,11 +23,22 @@ describe("App", () => {
 
     expect(screen.getByRole("heading", { name: "Parsnip" })).toBeInTheDocument();
 
-    await screen.findByText(/words loaded/i);
+    // Both WordLookup and HiddenWords show a "words loaded" count once
+    // their (identical, mocked) word list has loaded.
+    await screen.findAllByText(/words loaded/i);
     await user.type(screen.getByRole("textbox", { name: /word to look up/i }), "crossword");
     await user.click(screen.getByRole("button", { name: /check/i }));
 
     expect(await screen.findByText(/is a valid word/i)).toBeInTheDocument();
+  });
+
+  it("also mounts the hidden words finder", async () => {
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /hidden words/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /find hidden words/i }),
+    ).toBeInTheDocument();
   });
 
   it("also mounts the cryptic clue strategy finder", async () => {

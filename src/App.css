@@ -128,6 +128,124 @@
   font-size: 15px;
 }
 
+.hidden-words {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hidden-words__row {
+  display: flex;
+  gap: 8px;
+}
+
+.hidden-words__input {
+  flex: 1;
+  font: inherit;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.hidden-words__length {
+  width: 90px;
+  font: inherit;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.hidden-words__input:focus-visible,
+.hidden-words__length:focus-visible {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 1px;
+}
+
+.hidden-words__submit {
+  font: inherit;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.hidden-words__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.hidden-words__status {
+  padding: 12px 16px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.hidden-words__status--not-found,
+.hidden-words__status--error {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.hidden-words__status--hint {
+  background: var(--code-bg);
+  color: var(--text);
+}
+
+.hidden-words__results-count {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.hidden-words__list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hidden-words__item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.hidden-words__word {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.hidden-words__preview {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.hidden-words__highlight {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 0 2px;
+  font-weight: 600;
+}
+
+.hidden-words__count {
+  color: var(--text);
+  font-size: 15px;
+}
+
 .cryptic-clue {
   display: flex;
   flex-direction: column;

@@ -4,6 +4,7 @@ import {
   parseWordList,
   createWordStore,
   loadWordStore,
+  findHiddenWords,
 } from "../../src/wordStore/wordStore";
 
 describe("normalizeWord", () => {
@@ -139,6 +140,52 @@ describe("findAnagrams", () => {
     const repeats = createWordStore(new Set(["eave", "code"]));
     // fixed letters are "e", "e" (2 wildcards) — needs at least two e's
     expect(repeats.findAnagrams("ee??")).toEqual(["eave"]);
+  });
+});
+
+describe("findHiddenWords", () => {
+  const store = createWordStore(new Set(["cat", "art"]));
+
+  it("finds a word hidden within a single word", () => {
+    // "s cat art" -> letters "scatart"; "cat" sits at original indices 2-5
+    expect(findHiddenWords(store, "s cat art", 3)).toEqual([
+      { word: "cat", start: 2, end: 5 },
+      { word: "art", start: 6, end: 9 },
+    ]);
+  });
+
+  it("finds a word hidden across a word break, highlighting the gap it crosses", () => {
+    // letters: t h e c a t e r r i e r -> "cat" spans the space in "ca terrier"
+    const matches = findHiddenWords(store, "the ca terrier", 3);
+    expect(matches).toContainEqual({ word: "cat", start: 4, end: 8 });
+    expect("the ca terrier".slice(4, 8)).toBe("ca t");
+  });
+
+  it("is case-insensitive", () => {
+    expect(findHiddenWords(store, "S CAT ART", 3)).toEqual([
+      { word: "cat", start: 2, end: 5 },
+      { word: "art", start: 6, end: 9 },
+    ]);
+  });
+
+  it("ignores punctuation, including ? — wildcards aren't a thing here", () => {
+    const matches = findHiddenWords(store, "c?at!", 3);
+    expect(matches).toContainEqual({ word: "cat", start: 0, end: 4 });
+    expect("c?at!".slice(0, 4)).toBe("c?at");
+  });
+
+  it("returns an empty array when nothing of that length is hidden", () => {
+    expect(findHiddenWords(store, "no matches here", 3)).toEqual([]);
+  });
+
+  it("returns an empty array for a non-positive or non-integer length", () => {
+    expect(findHiddenWords(store, "s cat art", 0)).toEqual([]);
+    expect(findHiddenWords(store, "s cat art", -3)).toEqual([]);
+    expect(findHiddenWords(store, "s cat art", 2.5)).toEqual([]);
+  });
+
+  it("returns an empty array when the sentence has fewer letters than the requested length", () => {
+    expect(findHiddenWords(store, "hi", 5)).toEqual([]);
   });
 });
 

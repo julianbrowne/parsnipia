@@ -25,6 +25,15 @@ export interface WordStore {
   findAnagrams(letters: string): string[];
 }
 
+/** A dictionary word found running contiguously through a sentence's letters. */
+export interface HiddenWordMatch {
+  word: string;
+  /** Start index (inclusive) of the match in the original sentence. */
+  start: number;
+  /** End index (exclusive) of the match in the original sentence. */
+  end: number;
+}
+
 /**
  * Normalizes user input for lookup/storage: trims surrounding whitespace
  * and lower-cases it. This does not validate that the result looks like a
@@ -137,4 +146,46 @@ export async function loadWordStore(
   }
   const raw = await response.text();
   return createWordStore(parseWordList(raw));
+}
+
+/**
+ * Finds every known word of exactly `length` letters that runs
+ * contiguously through `sentence`'s letters once spaces and punctuation
+ * are removed — e.g. "cat" is found in "the ca terrier" (spanning the
+ * word break). Matches are returned left to right; `start`/`end` index
+ * into the original `sentence` (not the letters-only version), covering
+ * whatever spaces or punctuation the match happens to cross, so callers
+ * can highlight the match in place.
+ */
+export function findHiddenWords(
+  store: WordStore,
+  sentence: string,
+  length: number,
+): HiddenWordMatch[] {
+  if (!Number.isInteger(length) || length <= 0) {
+    return [];
+  }
+
+  const letters: string[] = [];
+  const positions: number[] = [];
+  for (let i = 0; i < sentence.length; i++) {
+    const char = sentence[i];
+    if (/[a-zA-Z]/.test(char)) {
+      letters.push(char.toLowerCase());
+      positions.push(i);
+    }
+  }
+
+  const matches: HiddenWordMatch[] = [];
+  for (let start = 0; start + length <= letters.length; start++) {
+    const candidate = letters.slice(start, start + length).join("");
+    if (store.has(candidate)) {
+      matches.push({
+        word: candidate,
+        start: positions[start],
+        end: positions[start + length - 1] + 1,
+      });
+    }
+  }
+  return matches;
 }

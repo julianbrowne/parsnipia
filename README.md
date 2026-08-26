@@ -13,7 +13,13 @@ letters — some of which may be `?` for an unknown letter — and offer:
 - Enter a UK English word (optionally with `?` wildcards) and either check
   whether it's in the word store, list every word matching the pattern, or
   list every anagram of it (with `?`s as blank tiles) — the **Solve** and
-  **Anagram** options in the dropdown next to Check.
+  **Anagram** radio options next to Check.
+- Enter a sentence and a length, and list every dictionary word of that
+  length hidden in its contiguous letters once spaces are removed — the
+  classic cryptic "hidden word" wordplay. Matches can cross word breaks
+  (e.g. "cat" hidden in "the **ca t**errier"), and each result highlights
+  exactly where it sits in the original sentence. No `?` wildcards here —
+  a hidden word is whatever it is, not a pattern to fill in.
 - Enter a full cryptic clue and get back a list of candidate wordplay
   strategies: every word or phrase in the clue that's a known cryptic
   indicator, highlighted in place, alongside a plain-English explanation
