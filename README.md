@@ -26,6 +26,12 @@ letters — some of which may be `?` for an unknown letter — and offer:
   of what kind of wordplay it suggests (anagram, hidden word, reversal,
   container, insertion, deletion, homophone, alternation). Ambiguous
   indicators (most of them, in practice) surface every interpretation.
+  Alongside those, it also flags **letter substitutions** — words that
+  themselves stand in for a letter elsewhere in the wordplay (e.g.
+  "North" for N, "Five" for its Roman numeral V) — from a small,
+  hand-curated lookup table meant to grow over time (see
+  [`src/substitutionStore/substitutionStore.ts`](src/substitutionStore/substitutionStore.ts),
+  add new ones to `COMMON_SUBSTITUTIONS` as you come across them).
 
 ## Word source
 

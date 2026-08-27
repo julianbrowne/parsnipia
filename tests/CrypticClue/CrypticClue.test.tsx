@@ -79,6 +79,21 @@ describe("CrypticClue", () => {
     expect(screen.getByText(/^Alternation$/)).toBeInTheDocument();
   });
 
+  it("finds a letter substitution alongside any wordplay strategies", async () => {
+    mockedLoadIndicatorStore.mockResolvedValue(storeFrom("mixed\tanagram\t12"));
+    const user = userEvent.setup();
+    render(<CrypticClue />);
+
+    await screen.findByText(/indicators loaded/i);
+    await user.type(screen.getByRole("textbox"), "Head North for the border");
+    await user.click(screen.getByRole("button", { name: /find strategies/i }));
+
+    expect(await screen.findByText(/1 possible letter substitution/i)).toBeInTheDocument();
+    expect(screen.getByText("North")).toBeInTheDocument();
+    expect(screen.getByText(/can stand in for/i)).toBeInTheDocument();
+    expect(screen.getByText("N")).toBeInTheDocument();
+  });
+
   it("reports when no indicators are recognised", async () => {
     mockedLoadIndicatorStore.mockResolvedValue(storeFrom("mixed\tanagram\t12"));
     const user = userEvent.setup();
@@ -88,7 +103,9 @@ describe("CrypticClue", () => {
     await user.type(screen.getByRole("textbox"), "plain sailing");
     await user.click(screen.getByRole("button", { name: /find strategies/i }));
 
-    expect(await screen.findByText(/no cryptic indicators recognised/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/no cryptic indicators or substitutions recognised/i),
+    ).toBeInTheDocument();
   });
 
   it("shows an error if the indicator list fails to load", async () => {

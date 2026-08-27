@@ -7,13 +7,22 @@ import {
   type IndicatorStore,
   type ClueMatch,
 } from "../indicatorStore/indicatorStore";
+import {
+  DEFAULT_SUBSTITUTION_STORE,
+  findSubstitutionMatches,
+  type SubstitutionMatch,
+} from "../substitutionStore/substitutionStore";
 
 type LoadState =
   | { status: "loading" }
   | { status: "error"; message: string }
   | { status: "ready"; store: IndicatorStore };
 
-type Result = { tokens: string[]; matches: ClueMatch[] } | null;
+type Result = {
+  tokens: string[];
+  matches: ClueMatch[];
+  substitutions: SubstitutionMatch[];
+} | null;
 
 /** Cap how many strategies we render, so a long clue full of common words doesn't flood the page. */
 const MAX_DISPLAYED_STRATEGIES = 100;
@@ -84,7 +93,11 @@ export function CrypticClue() {
     }
 
     setHint(null);
-    setResult({ tokens, matches: findIndicatorMatches(loadState.store, tokens) });
+    setResult({
+      tokens,
+      matches: findIndicatorMatches(loadState.store, tokens),
+      substitutions: findSubstitutionMatches(DEFAULT_SUBSTITUTION_STORE, tokens),
+    });
   }
 
   const isReady = loadState.status === "ready";
@@ -130,11 +143,15 @@ export function CrypticClue() {
         </p>
       )}
 
-      {loadState.status === "ready" && !hint && result && result.matches.length === 0 && (
-        <p role="status" className="cryptic-clue__status cryptic-clue__status--not-found">
-          ✗ No cryptic indicators recognised in that clue (yet).
-        </p>
-      )}
+      {loadState.status === "ready" &&
+        !hint &&
+        result &&
+        result.matches.length === 0 &&
+        result.substitutions.length === 0 && (
+          <p role="status" className="cryptic-clue__status cryptic-clue__status--not-found">
+            ✗ No cryptic indicators or substitutions recognised in that clue (yet).
+          </p>
+        )}
 
       {loadState.status === "ready" && !hint && result && result.matches.length > 0 && (
         <div role="status" className="cryptic-clue__strategies">
@@ -162,6 +179,34 @@ export function CrypticClue() {
                 <p className="cryptic-clue__explanation">
                   <strong>{capitalize(match.wordplay)}</strong> —{" "}
                   {describeWordplay(match.wordplay)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {loadState.status === "ready" && !hint && result && result.substitutions.length > 0 && (
+        <div role="status" className="cryptic-clue__substitutions">
+          <p className="cryptic-clue__substitutions-count">
+            ✓ {result.substitutions.length} possible letter{" "}
+            {result.substitutions.length === 1 ? "substitution" : "substitutions"}
+            {result.substitutions.length > MAX_DISPLAYED_STRATEGIES
+              ? ` (showing first ${MAX_DISPLAYED_STRATEGIES})`
+              : ""}
+            :
+          </p>
+          <ul className="cryptic-clue__substitution-list">
+            {result.substitutions.slice(0, MAX_DISPLAYED_STRATEGIES).map((sub) => (
+              <li
+                key={`${sub.startWord}-${sub.endWord}-${sub.letters}`}
+                className="cryptic-clue__strategy"
+              >
+                <p className="cryptic-clue__preview">
+                  <HighlightedClue tokens={result.tokens} start={sub.startWord} end={sub.endWord} />
+                </p>
+                <p className="cryptic-clue__explanation">
+                  Can stand in for <strong>{sub.letters.toUpperCase()}</strong>.
                 </p>
               </li>
             ))}
