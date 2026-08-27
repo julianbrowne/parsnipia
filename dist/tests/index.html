@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parsnip — Test Results</title>
+    <style>
+      :root {
+        --text: #6b6375;
+        --text-h: #08060d;
+        --bg: #fff;
+        --border: #e5e4e7;
+        --code-bg: #f4f3ec;
+        --success: #1a7f37;
+        --success-bg: rgba(26, 127, 55, 0.1);
+        --error: #cf222e;
+        --error-bg: rgba(207, 34, 46, 0.1);
+        --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+        --mono: ui-monospace, Consolas, monospace;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --text: #9ca3af;
+          --text-h: #f3f4f6;
+          --bg: #16171d;
+          --border: #2e303a;
+          --code-bg: #1f2028;
+          --success: #3fb950;
+          --success-bg: rgba(63, 185, 80, 0.15);
+          --error: #f85149;
+          --error-bg: rgba(248, 81, 73, 0.15);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font: 16px/145% var(--sans);
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 24px 48px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 32px;
+      }
+
+      .back-link {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .back-link:hover {
+        color: var(--text-h);
+      }
+
+      h1 {
+        font-size: 24px;
+        margin: 0;
+        color: var(--text-h);
+      }
+
+      h2 {
+        font-size: 16px;
+        margin: 0 0 4px;
+        color: var(--text-h);
+        font-family: var(--mono);
+      }
+
+      #summary {
+        padding: 16px 20px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        font-weight: 500;
+      }
+
+      #summary.passed {
+        background: var(--success-bg);
+        color: var(--success);
+      }
+
+      #summary.failed {
+        background: var(--error-bg);
+        color: var(--error);
+      }
+
+      #summary.pending {
+        background: var(--code-bg);
+        color: var(--text);
+      }
+
+      .timestamp {
+        font-weight: 400;
+        font-size: 14px;
+        display: block;
+        margin-top: 4px;
+      }
+
+      .file {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+      }
+
+      ul.tests {
+        list-style: none;
+        margin: 8px 0 0;
+        padding: 0;
+      }
+
+      ul.tests li {
+        padding: 4px 0;
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+
+      .mark {
+        flex: none;
+        font-weight: 700;
+      }
+
+      .mark.passed {
+        color: var(--success);
+      }
+
+      .mark.failed {
+        color: var(--error);
+      }
+
+      .failure-message {
+        font-family: var(--mono);
+        font-size: 13px;
+        white-space: pre-wrap;
+        background: var(--code-bg);
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin: 4px 0 4px 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a class="back-link" href="../">← Back to app</a>
+      <h1>Test Results</h1>
+    </header>
+    <main>
+      <div id="summary">Loading test results…</div>
+      <div id="files"></div>
+    </main>
+    <script>
+      async function main() {
+        const summaryEl = document.getElementById("summary");
+        const filesEl = document.getElementById("files");
+
+        let data;
+        try {
+          const response = await fetch("./results.json", { cache: "no-store" });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          data = await response.json();
+        } catch (error) {
+          summaryEl.className = "pending";
+          summaryEl.textContent =
+            "No test results found yet. Run `npm test` to generate them.";
+          return;
+        }
+
+        const { numTotalTests, numPassedTests, numFailedTests, testResults, startTime } =
+          data;
+
+        summaryEl.className = numFailedTests > 0 ? "failed" : "passed";
+        const when = startTime ? new Date(startTime).toLocaleString() : null;
+        summaryEl.innerHTML =
+          `${numPassedTests} / ${numTotalTests} tests passed` +
+          (numFailedTests > 0 ? ` (${numFailedTests} failed)` : "") +
+          (when ? `<span class="timestamp">Last run: ${when}</span>` : "");
+
+        for (const file of testResults) {
+          const fileEl = document.createElement("div");
+          fileEl.className = "file";
+
+          const heading = document.createElement("h2");
+          heading.textContent = relativePath(file.name);
+          fileEl.appendChild(heading);
+
+          const list = document.createElement("ul");
+          list.className = "tests";
+
+          for (const test of file.assertionResults) {
+            const item = document.createElement("li");
+            const mark = document.createElement("span");
+            mark.className = `mark ${test.status}`;
+            mark.textContent = test.status === "passed" ? "✓" : "✗";
+            const label = document.createElement("span");
+            label.textContent = test.fullName || test.title;
+            item.appendChild(mark);
+            item.appendChild(label);
+            list.appendChild(item);
+
+            if (test.failureMessages && test.failureMessages.length > 0) {
+              const failure = document.createElement("div");
+              failure.className = "failure-message";
+              failure.textContent = test.failureMessages.join("\n\n");
+              list.appendChild(failure);
+            }
+          }
+
+          fileEl.appendChild(list);
+          filesEl.appendChild(fileEl);
+        }
+      }
+
+      function relativePath(absolutePath) {
+        const marker = "/tests/";
+        const index = absolutePath.lastIndexOf(marker);
+        return index === -1 ? absolutePath : absolutePath.slice(index + 1);
+      }
+
+      main();
+    </script>
+  </body>
+</html>
