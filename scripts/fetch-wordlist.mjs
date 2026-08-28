@@ -67,7 +67,7 @@ async function main() {
   ].sort();
 
   const header = [
-    "# Parsnip UK English word list",
+    "# Parsnipia UK English word list",
     "#",
     "# Derived from the SCOWL/ESDB English Speller Database",
     "# <https://wordlist.aspell.net>, generated via the on-demand list",

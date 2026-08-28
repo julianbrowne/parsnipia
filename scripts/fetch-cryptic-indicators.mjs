@@ -116,7 +116,7 @@ async function main() {
   const wordplayTypes = [...new Set(entries.map((e) => e.wordplay))].sort();
 
   const headerComment = [
-    "# Parsnip cryptic-crossword wordplay indicators",
+    "# Parsnipia cryptic-crossword wordplay indicators",
     "#",
     '# Data: "Cryptic Crosswords" by George Ho <https://cryptics.georgeho.org>',
     "# (the `indicators` table), licensed under the Open Database License",

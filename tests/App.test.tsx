@@ -21,7 +21,7 @@ describe("App", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "Parsnip" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Parsnipia" })).toBeInTheDocument();
 
     // Both WordLookup and HiddenWords show a "words loaded" count once
     // their (identical, mocked) word list has loaded.

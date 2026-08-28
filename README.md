@@ -1,6 +1,6 @@
-# Parsnip
+# Parsnipia
 
-Parsnip is a crossword solver's friend. Eventually it will take a string of
+Parsnipia is a crossword solver's friend. Eventually it will take a string of
 letters — some of which may be `?` for an unknown letter — and offer:
 
 - **Anagrams** of the letters
