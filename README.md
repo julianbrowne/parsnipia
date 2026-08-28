@@ -96,10 +96,34 @@ once after cloning before opening the report locally.
 
 ## Deployment
 
-The app is built with Vite and deployed to GitHub Pages, served from
-`/Parsnip/` (see `base` in [`vite.config.ts`](vite.config.ts)). Pushes to
-`main` trigger [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
-which runs the tests, builds, and publishes `dist/` to GitHub Pages.
+GitHub Pages' "deploy from a branch" mode can only serve a repo's root or
+its `/docs` folder — nothing else, and no build step runs on GitHub's
+side. So `npm run build` builds straight into [`docs/`](docs) (see
+`build.outDir` in [`vite.config.ts`](vite.config.ts)), which is committed
+like any other source, and GitHub Pages serves it directly whenever
+`main` is pushed. `docs/` is a build artifact, not something to hand-edit
+— always regenerate it with `npm run build`, never edit it directly.
 
-For this to work, set the repo's **Settings → Pages → Build and
-deployment → Source** to **GitHub Actions**.
+To publish a change:
+
+```sh
+npm run build   # rebuilds docs/
+git add -A
+git commit -m "…"
+git push
+```
+
+One repo setting to check once: **Settings → Pages → Build and
+deployment → Source** should be **Deploy from a branch**, branch `main`,
+folder **/docs**.
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push
+and PR: lint, test, build, and — since nothing rebuilds `docs/` for
+you — a check that a fresh build of `docs/` matches what's committed, to
+catch a "forgot to rebuild before pushing" mistake before it ships a
+stale site.
+
+The site is served at `https://julianbrowne.github.io/parsnipia/` — note
+that's the **GitHub repo name** (`parsnipia`), which is what `base` in
+`vite.config.ts` needs to match; it's unrelated to this local folder's
+name.

@@ -17,3 +17,16 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      - name: Check docs/ is committed and up to date
+        # docs/ is what GitHub Pages actually serves (deploy-from-branch
+        # mode only reads / or /docs), committed straight into the repo
+        # rather than built by CI. Catch the "forgot to rebuild before
+        # pushing" mistake here instead of shipping a stale site.
+        # docs/tests/results.json is excluded: it's just this run's own
+        # test-report timestamp, expected to differ from whatever was
+        # committed.
+        run: |
+          if ! git diff --exit-code -- docs ':(exclude)docs/tests/results.json'; then
+            echo "::error::docs/ doesn't match a fresh build — run 'npm run build' and commit docs/ before pushing."
+            exit 1
+          fi
