@@ -146,12 +146,12 @@ describe("findAnagrams", () => {
 describe("findHiddenWords", () => {
   const store = createWordStore(new Set(["cat", "art"]));
 
-  it("finds a word hidden within a single word", () => {
-    // "s cat art" -> letters "scatart"; "cat" sits at original indices 2-5
-    expect(findHiddenWords(store, "s cat art", 3)).toEqual([
-      { word: "cat", start: 2, end: 5 },
-      { word: "art", start: 6, end: 9 },
-    ]);
+  it("finds a word hidden within a single larger word", () => {
+    // "category" contains "cat" as its first 3 letters, but "category"
+    // itself isn't "cat" — a genuine partial, hidden match.
+    const matches = findHiddenWords(store, "the category store", 3);
+    expect(matches).toContainEqual({ word: "cat", start: 4, end: 7 });
+    expect("the category store".slice(4, 7)).toBe("cat");
   });
 
   it("finds a word hidden across a word break, highlighting the gap it crosses", () => {
@@ -161,17 +161,40 @@ describe("findHiddenWords", () => {
     expect("the ca terrier".slice(4, 8)).toBe("ca t");
   });
 
+  it("excludes a match that is simply one of the original words, unchanged", () => {
+    // "like" appears verbatim as its own word — not hidden, just itself.
+    // "calf" genuinely is hidden, crossing "mathemati-cal f-unction".
+    const clueStore = createWordStore(new Set(["like", "calf"]));
+    const matches = findHiddenWords(clueStore, "sounds like any mathematical function", 4);
+    expect(matches.some((match) => match.word === "like")).toBe(false);
+    expect(matches).toContainEqual({ word: "calf", start: 25, end: 30 });
+    expect("sounds like any mathematical function".slice(25, 30)).toBe("cal f");
+  });
+
+  it("still excludes a whole-word match even when it's the only word in the sentence", () => {
+    const clueStore = createWordStore(new Set(["cat"]));
+    expect(findHiddenWords(clueStore, "cat", 3)).toEqual([]);
+  });
+
+  it("does not exclude a match spanning two whole adjacent words", () => {
+    // "heat" = the whole of "he" plus the whole of "ate" — still hidden,
+    // since it isn't equal to either individual word.
+    const clueStore = createWordStore(new Set(["heat"]));
+    const matches = findHiddenWords(clueStore, "he ate lunch", 4);
+    expect(matches).toContainEqual({ word: "heat", start: 0, end: 5 });
+  });
+
   it("is case-insensitive", () => {
-    expect(findHiddenWords(store, "S CAT ART", 3)).toEqual([
-      { word: "cat", start: 2, end: 5 },
-      { word: "art", start: 6, end: 9 },
-    ]);
+    const matches = findHiddenWords(store, "THE CATEGORY STORE", 3);
+    expect(matches).toContainEqual({ word: "cat", start: 4, end: 7 });
   });
 
   it("ignores punctuation, including ? — wildcards aren't a thing here", () => {
-    const matches = findHiddenWords(store, "c?at!", 3);
-    expect(matches).toContainEqual({ word: "cat", start: 0, end: 4 });
-    expect("c?at!".slice(0, 4)).toBe("c?at");
+    // "c?at!s" (4 letters: c,a,t,s) — matching just "cat" is a partial,
+    // hidden run, not the whole word, so it isn't excluded.
+    const matches = findHiddenWords(store, "a c?at!s meow", 3);
+    expect(matches).toContainEqual({ word: "cat", start: 2, end: 6 });
+    expect("a c?at!s meow".slice(2, 6)).toBe("c?at");
   });
 
   it("returns an empty array when nothing of that length is hidden", () => {
@@ -179,9 +202,9 @@ describe("findHiddenWords", () => {
   });
 
   it("returns an empty array for a non-positive or non-integer length", () => {
-    expect(findHiddenWords(store, "s cat art", 0)).toEqual([]);
-    expect(findHiddenWords(store, "s cat art", -3)).toEqual([]);
-    expect(findHiddenWords(store, "s cat art", 2.5)).toEqual([]);
+    expect(findHiddenWords(store, "the category store", 0)).toEqual([]);
+    expect(findHiddenWords(store, "the category store", -3)).toEqual([]);
+    expect(findHiddenWords(store, "the category store", 2.5)).toEqual([]);
   });
 
   it("returns an empty array when the sentence has fewer letters than the requested length", () => {

@@ -156,6 +156,12 @@ export async function loadWordStore(
  * into the original `sentence` (not the letters-only version), covering
  * whatever spaces or punctuation the match happens to cross, so callers
  * can highlight the match in place.
+ *
+ * A match is excluded if it's simply one of the original whitespace-
+ * separated words, unchanged — that word isn't *hidden*, it's just
+ * sitting there as itself (e.g. "like" in "sounds like any mathematical
+ * function" doesn't count, but "calf", spanning "mathemati**cal
+ * f**unction", does).
  */
 export function findHiddenWords(
   store: WordStore,
@@ -168,22 +174,43 @@ export function findHiddenWords(
 
   const letters: string[] = [];
   const positions: number[] = [];
+  const runOfLetter: number[] = [];
+  let currentRun = -1;
+  let inRun = false;
   for (let i = 0; i < sentence.length; i++) {
     const char = sentence[i];
+    if (/\s/.test(char)) {
+      inRun = false;
+      continue;
+    }
+    if (!inRun) {
+      currentRun++;
+      inRun = true;
+    }
     if (/[a-zA-Z]/.test(char)) {
       letters.push(char.toLowerCase());
       positions.push(i);
+      runOfLetter.push(currentRun);
     }
   }
 
   const matches: HiddenWordMatch[] = [];
   for (let start = 0; start + length <= letters.length; start++) {
-    const candidate = letters.slice(start, start + length).join("");
+    const end = start + length;
+    const spansExactlyOneOriginalWord =
+      runOfLetter[start] === runOfLetter[end - 1] &&
+      (start === 0 || runOfLetter[start - 1] !== runOfLetter[start]) &&
+      (end === letters.length || runOfLetter[end] !== runOfLetter[end - 1]);
+    if (spansExactlyOneOriginalWord) {
+      continue;
+    }
+
+    const candidate = letters.slice(start, end).join("");
     if (store.has(candidate)) {
       matches.push({
         word: candidate,
         start: positions[start],
-        end: positions[start + length - 1] + 1,
+        end: positions[end - 1] + 1,
       });
     }
   }

@@ -47,19 +47,38 @@ describe("HiddenWords", () => {
     expect(screen.getByRole("button", { name: /find hidden words/i })).toBeDisabled();
   });
 
-  it("finds a hidden word within a single word", async () => {
+  it("finds hidden words genuinely embedded within larger words", async () => {
+    // "cat" is embedded in "category", "art" in "start" — neither is a
+    // standalone word in the sentence, so both count as hidden.
     mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["cat", "art"])));
     const user = userEvent.setup();
     const { container } = render(<HiddenWords />);
 
     await screen.findByText(/words loaded/i);
-    await enterSentenceAndLength(user, "s cat art", "3");
+    await enterSentenceAndLength(user, "the category start here", "3");
 
     expect(await screen.findByText(/2 hidden words found/i)).toBeInTheDocument();
     const words = [...container.querySelectorAll(".hidden-words__word")].map(
       (el) => el.textContent,
     );
     expect(words).toEqual(["cat", "art"]);
+  });
+
+  it("does not report a word as hidden when it appears verbatim as its own word", async () => {
+    // "like" is one of the actual words in the sentence, not concealed —
+    // only "calf" (crossing "mathematical"/"function") should be found.
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["like", "calf"])));
+    const user = userEvent.setup();
+    const { container } = render(<HiddenWords />);
+
+    await screen.findByText(/words loaded/i);
+    await enterSentenceAndLength(user, "sounds like any mathematical function", "4");
+
+    expect(await screen.findByText(/1 hidden word found/i)).toBeInTheDocument();
+    const words = [...container.querySelectorAll(".hidden-words__word")].map(
+      (el) => el.textContent,
+    );
+    expect(words).toEqual(["calf"]);
   });
 
   it("finds a hidden word that crosses a word break", async () => {
