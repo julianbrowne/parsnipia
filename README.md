@@ -1,5 +1,7 @@
 # Parsnipia
 
+**[Try it live](https://julianbrowne.github.io/parsnipia/)**
+
 Parsnipia is a crossword solver's friend. Eventually it will take a string of
 letters — some of which may be `?` for an unknown letter — and offer:
 
