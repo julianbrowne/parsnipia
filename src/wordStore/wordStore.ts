@@ -101,7 +101,29 @@ export function parseWordList(raw: string): Set<string> {
   return words;
 }
 
+/**
+ * Groups `words` by length. Both findMatches and findAnagrams only ever
+ * care about words of one specific length, so scanning just that bucket
+ * — instead of the whole dictionary — keeps them fast as the dictionary
+ * grows: each call becomes proportional to how many words share that
+ * length, not to the dictionary's total size.
+ */
+function groupByLength(words: Iterable<string>): Map<number, string[]> {
+  const buckets = new Map<number, string[]>();
+  for (const word of words) {
+    const bucket = buckets.get(word.length);
+    if (bucket) {
+      bucket.push(word);
+    } else {
+      buckets.set(word.length, [word]);
+    }
+  }
+  return buckets;
+}
+
 export function createWordStore(words: Set<string>): WordStore {
+  const wordsByLength = groupByLength(words);
+
   return {
     get size() {
       return words.size;
@@ -112,24 +134,14 @@ export function createWordStore(words: Set<string>): WordStore {
     findMatches(pattern: string) {
       const normalized = normalizeWord(pattern);
       const regexp = patternToRegExp(normalized);
-      const matches: string[] = [];
-      for (const word of words) {
-        if (word.length === normalized.length && regexp.test(word)) {
-          matches.push(word);
-        }
-      }
-      return matches.sort();
+      const candidates = wordsByLength.get(normalized.length) ?? [];
+      return candidates.filter((word) => regexp.test(word)).sort();
     },
     findAnagrams(letters: string) {
       const normalized = normalizeWord(letters);
       const required = countLetters(normalized.replace(/\?/g, ""));
-      const matches: string[] = [];
-      for (const word of words) {
-        if (word.length === normalized.length && containsRequiredLetters(word, required)) {
-          matches.push(word);
-        }
-      }
-      return matches.sort();
+      const candidates = wordsByLength.get(normalized.length) ?? [];
+      return candidates.filter((word) => containsRequiredLetters(word, required)).sort();
     },
   };
 }
