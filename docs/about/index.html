@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Parsnipia</title>
+    <style>
+      :root {
+        --text: #6b6375;
+        --text-h: #08060d;
+        --bg: #fff;
+        --border: #e5e4e7;
+        --code-bg: #f4f3ec;
+        --accent: #aa3bff;
+        --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+        --mono: ui-monospace, Consolas, monospace;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --text: #9ca3af;
+          --text-h: #f3f4f6;
+          --bg: #16171d;
+          --border: #2e303a;
+          --code-bg: #1f2028;
+          --accent: #c084fc;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font: 16px/145% var(--sans);
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      main {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 0 24px 48px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 32px;
+      }
+
+      .back-link {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .back-link:hover {
+        color: var(--text-h);
+      }
+
+      h1 {
+        font-size: 24px;
+        margin: 0;
+        color: var(--text-h);
+      }
+
+      h2 {
+        font-size: 18px;
+        margin: 32px 0 12px;
+        color: var(--text-h);
+      }
+
+      p {
+        margin: 0 0 12px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      .credits {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .credits li {
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .credits .name {
+        display: block;
+        font-weight: 500;
+        color: var(--text-h);
+      }
+
+      .credits .detail {
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a class="back-link" href="../">← Back to app</a>
+      <h1>About Parsnipia</h1>
+    </header>
+    <main>
+      <p>
+        Parsnipia is a crossword solver's friend. Enter a word — with
+        <code style="font-family: var(--mono)">?</code> for any unknown
+        letters — to check it against the dictionary, list every word
+        matching that pattern, or list its anagrams. Enter a sentence and a
+        length to find words hidden in its letters. Or enter a full cryptic
+        clue to get back a list of candidate wordplay strategies: known
+        indicators and letter substitutions, each highlighted in place with
+        a plain-English explanation of what it suggests.
+      </p>
+      <p>
+        It's a work in progress, built to grow alongside whatever comes up
+        while actually solving crosswords.
+      </p>
+
+      <h2>Open source &amp; free resources used</h2>
+      <ul class="credits">
+        <li>
+          <span class="name">React</span>
+          <span class="detail"
+            >UI library — <a href="https://react.dev">react.dev</a> — MIT
+            License</span
+          >
+        </li>
+        <li>
+          <span class="name">Vite</span>
+          <span class="detail"
+            >Build tool — <a href="https://vite.dev">vite.dev</a> — MIT
+            License</span
+          >
+        </li>
+        <li>
+          <span class="name">TypeScript</span>
+          <span class="detail"
+            ><a href="https://www.typescriptlang.org">typescriptlang.org</a> —
+            Apache License 2.0</span
+          >
+        </li>
+        <li>
+          <span class="name">Vitest</span>
+          <span class="detail"
+            >Test runner — <a href="https://vitest.dev">vitest.dev</a> — MIT
+            License</span
+          >
+        </li>
+        <li>
+          <span class="name">React Testing Library</span>
+          <span class="detail"
+            ><a href="https://testing-library.com/react">testing-library.com</a>
+            — MIT License</span
+          >
+        </li>
+        <li>
+          <span class="name">oxlint</span>
+          <span class="detail"
+            >Linter — <a href="https://oxc.rs">oxc.rs</a> — MIT License</span
+          >
+        </li>
+        <li>
+          <span class="name">SCOWL / ESDB</span>
+          <span class="detail"
+            >UK English word list, by Kevin Atkinson —
+            <a href="https://wordlist.aspell.net">wordlist.aspell.net</a></span
+          >
+        </li>
+        <li>
+          <span class="name">"Cryptic Crosswords" dataset</span>
+          <span class="detail"
+            >Wordplay indicators, by George Ho —
+            <a href="https://cryptics.georgeho.org">cryptics.georgeho.org</a> —
+            Open Database License (ODbL) v1.0</span
+          >
+        </li>
+        <li>
+          <span class="name">App icon &amp; logo</span>
+          <span class="detail"
+            >By Smash Icons —
+            <a href="https://www.flaticon.com/authors/smashicons"
+              >flaticon.com/authors/smashicons</a
+            ></span
+          >
+        </li>
+      </ul>
+    </main>
+  </body>
+</html>

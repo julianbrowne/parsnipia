@@ -9,8 +9,6 @@ function App() {
     <>
       <Toolbar />
       <main className="page">
-        <h1>Parsnipia</h1>
-        <p className="tagline">A crossword solver's friend</p>
         <WordLookup />
         <hr className="section-divider" />
         <h2 className="section-heading">Hidden words</h2>
