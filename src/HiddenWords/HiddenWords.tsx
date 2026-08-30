@@ -67,7 +67,7 @@ export function HiddenWords() {
 
   return (
     <div className="hidden-words">
-      <form className="hidden-words__form" onSubmit={handleSubmit}>
+      <form className="hidden-words__form" onSubmit={handleSubmit} noValidate>
         <div className="hidden-words__row">
           <label htmlFor="hidden-words-sentence" className="visually-hidden">
             Sentence to search

@@ -441,13 +441,15 @@
   gap: 16px;
 }
 
-.find-matching-word__form {
+.find-matching-word__row {
   display: flex;
   gap: 8px;
 
+  /* The word field wraps to its own full-width line; the length field
+     and button share the line below it, rather than three controls
+     squeezing onto one row. */
   @media (max-width: 600px) {
-    flex-direction: column;
-    align-items: stretch;
+    flex-wrap: wrap;
   }
 }
 
@@ -461,11 +463,29 @@
   color: var(--text-h);
 
   @media (max-width: 600px) {
-    flex: initial;
+    flex: 1 1 100%;
   }
 }
 
-.find-matching-word__input:focus-visible {
+.find-matching-word__length {
+  width: 90px;
+  font: inherit;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+
+  /* On its own line with the submit button, it only ever needs to fit a
+     couple of digits — leave the rest of the row to the button's label. */
+  @media (max-width: 600px) {
+    width: auto;
+    flex: 0 1 80px;
+  }
+}
+
+.find-matching-word__input:focus-visible,
+.find-matching-word__length:focus-visible {
   outline: 2px solid var(--accent-border);
   outline-offset: 1px;
 }
@@ -480,6 +500,10 @@
   color: var(--accent);
   cursor: pointer;
   white-space: nowrap;
+
+  @media (max-width: 600px) {
+    flex: 1;
+  }
 }
 
 .find-matching-word__submit:disabled {

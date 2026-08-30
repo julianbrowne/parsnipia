@@ -23,6 +23,20 @@ function storeFrom(tsv: string) {
   return createThesaurusStore(parseThesaurusList(tsv));
 }
 
+async function enterWordAndLength(
+  user: ReturnType<typeof userEvent.setup>,
+  word: string,
+  length: string,
+) {
+  if (word) {
+    await user.type(screen.getByRole("textbox"), word);
+  }
+  if (length) {
+    await user.type(screen.getByLabelText(/word length/i), length);
+  }
+  await user.click(screen.getByRole("button", { name: /find matching words/i }));
+}
+
 describe("FindMatchingWord", () => {
   beforeEach(() => {
     mockedLoadThesaurusStore.mockReset();
@@ -38,6 +52,7 @@ describe("FindMatchingWord", () => {
     mockedLoadThesaurusStore.mockReturnValue(new Promise(() => {}));
     render(<FindMatchingWord />);
     expect(screen.getByRole("textbox")).toBeDisabled();
+    expect(screen.getByLabelText(/word length/i)).toBeDisabled();
     expect(screen.getByRole("button", { name: /find matching words/i })).toBeDisabled();
   });
 
@@ -78,6 +93,58 @@ describe("FindMatchingWord", () => {
     await user.click(screen.getByRole("button", { name: /find matching words/i }));
 
     expect(await screen.findByText(/enter a word/i)).toBeInTheDocument();
+  });
+
+  it("returns every matching word when no length is given", async () => {
+    mockedLoadThesaurusStore.mockResolvedValue(
+      storeFrom(["happy\tglad", "happy\tfelicitous"].join("\n")),
+    );
+    const user = userEvent.setup();
+    render(<FindMatchingWord />);
+
+    await screen.findByText(/word pairs loaded/i);
+    await enterWordAndLength(user, "happy", "");
+
+    expect(await screen.findByText(/2 words match/i)).toBeInTheDocument();
+    expect(screen.getByText("glad")).toBeInTheDocument();
+    expect(screen.getByText("felicitous")).toBeInTheDocument();
+  });
+
+  it("filters matches to the given length", async () => {
+    mockedLoadThesaurusStore.mockResolvedValue(
+      storeFrom(["happy\tglad", "happy\tfelicitous"].join("\n")),
+    );
+    const user = userEvent.setup();
+    render(<FindMatchingWord />);
+
+    await screen.findByText(/word pairs loaded/i);
+    await enterWordAndLength(user, "happy", "4");
+
+    expect(await screen.findByText(/1 word match/i)).toBeInTheDocument();
+    expect(screen.getByText("glad")).toBeInTheDocument();
+    expect(screen.queryByText("felicitous")).not.toBeInTheDocument();
+  });
+
+  it("reports no matches of that length, distinct from no matches at all", async () => {
+    mockedLoadThesaurusStore.mockResolvedValue(storeFrom("happy\tglad"));
+    const user = userEvent.setup();
+    render(<FindMatchingWord />);
+
+    await screen.findByText(/word pairs loaded/i);
+    await enterWordAndLength(user, "happy", "99");
+
+    expect(await screen.findByText(/no matching words of that length found/i)).toBeInTheDocument();
+  });
+
+  it("rejects a length of zero or less", async () => {
+    mockedLoadThesaurusStore.mockResolvedValue(storeFrom("happy\tglad"));
+    const user = userEvent.setup();
+    render(<FindMatchingWord />);
+
+    await screen.findByText(/word pairs loaded/i);
+    await enterWordAndLength(user, "happy", "0");
+
+    expect(await screen.findByText(/enter a word length of 1 or more/i)).toBeInTheDocument();
   });
 
   it("shows an error if the thesaurus fails to load", async () => {

@@ -42,6 +42,20 @@ describe("createThesaurusStore", () => {
   it("returns an empty array for an unknown word", () => {
     expect(store.findSynonyms("zzyzx")).toEqual([]);
   });
+
+  it("filters synonyms to a given length when one is provided", () => {
+    // "glad" is 4 letters, "felicitous" is 10.
+    expect(store.findSynonyms("happy", 4)).toEqual(["glad"]);
+    expect(store.findSynonyms("happy", 10)).toEqual(["felicitous"]);
+  });
+
+  it("returns every synonym regardless of length when none is given", () => {
+    expect(store.findSynonyms("happy")).toEqual(["glad", "felicitous"]);
+  });
+
+  it("returns an empty array when nothing matches the given length", () => {
+    expect(store.findSynonyms("happy", 3)).toEqual([]);
+  });
 });
 
 describe("loadThesaurusStore", () => {

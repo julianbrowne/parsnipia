@@ -10,8 +10,12 @@ export const DEFAULT_THESAURUS_URL = `${import.meta.env.BASE_URL}data/thesaurus.
 export interface ThesaurusStore {
   /** Number of word/synonym pairs held in the store. */
   readonly size: number;
-  /** Every known word sharing a similar meaning with `word` (case-insensitively). */
-  findSynonyms(word: string): string[];
+  /**
+   * Every known word sharing a similar meaning with `word`
+   * (case-insensitively). If `length` is given, only synonyms of
+   * exactly that many letters are returned.
+   */
+  findSynonyms(word: string, length?: number): string[];
 }
 
 /**
@@ -47,8 +51,11 @@ export function createThesaurusStore(entries: Map<string, string[]>): ThesaurusS
 
   return {
     size,
-    findSynonyms(word: string) {
-      return entries.get(normalizeWord(word)) ?? [];
+    findSynonyms(word: string, length?: number) {
+      const synonyms = entries.get(normalizeWord(word)) ?? [];
+      return length === undefined
+        ? synonyms
+        : synonyms.filter((synonym) => synonym.length === length);
     },
   };
 }

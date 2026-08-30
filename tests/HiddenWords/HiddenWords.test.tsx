@@ -138,6 +138,20 @@ describe("HiddenWords", () => {
     expect(await screen.findByText(/enter a word length/i)).toBeInTheDocument();
   });
 
+  it("rejects a length of zero rather than silently failing to submit", async () => {
+    // The length input's own min={1} would otherwise let the browser's
+    // native form validation block the submit before our handler ever
+    // runs, instead of showing this hint (needs `noValidate` on the form).
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["cat"])));
+    const user = userEvent.setup();
+    render(<HiddenWords />);
+
+    await screen.findByText(/words loaded/i);
+    await enterSentenceAndLength(user, "the cat sat", "0");
+
+    expect(await screen.findByText(/enter a word length of 1 or more/i)).toBeInTheDocument();
+  });
+
   it("shows an error if the dictionary fails to load", async () => {
     mockedLoadWordStore.mockRejectedValue(new Error("network down"));
     render(<HiddenWords />);
