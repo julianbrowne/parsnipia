@@ -44,13 +44,13 @@ export function Toolbar() {
     <header className="toolbar">
       <div className="toolbar__inner">
         <div className="toolbar__start">
-          <a href={HOME_URL} aria-label="Parsnipa Verbum home">
+          <a href={HOME_URL} aria-label="Parsnipia Verbum home">
             <img className="toolbar__logo" src={LOGO_URL} alt="" width={40} height={40} />
           </a>
         </div>
 
         <div className="toolbar__center">
-          <h1 className="toolbar__title">Parsnipa Verbum</h1>
+          <h1 className="toolbar__title">Parsnipia Verbum</h1>
           <p className="toolbar__tagline">the crossword solver's friend</p>
         </div>
 

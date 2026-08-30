@@ -7,7 +7,7 @@ describe("Toolbar", () => {
   it("shows the logo and the centered title and tagline", () => {
     render(<Toolbar />);
 
-    expect(screen.getByRole("heading", { name: "Parsnipa Verbum" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Parsnipia Verbum" })).toBeInTheDocument();
     expect(screen.getByText("the crossword solver's friend")).toBeInTheDocument();
 
     // Decorative: empty alt, since the adjacent heading already names the
