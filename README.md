@@ -155,7 +155,22 @@ you — a check that a fresh build of `docs/` matches what's committed, to
 catch a "forgot to rebuild before pushing" mistake before it ships a
 stale site.
 
-The site is served at `https://julianbrowne.github.io/parsnipia/` — note
-that's the **GitHub repo name** (`parsnipia`), which is what `base` in
-`vite.config.ts` needs to match; it's unrelated to this local folder's
-name.
+### Custom domain
+
+The site is served at [parsnipia.com](https://parsnipia.com) via
+[`public/CNAME`](public/CNAME) — like `docs/` itself, this ships with
+every build (Vite copies anything under `public/` verbatim), so the
+custom domain survives future rebuilds rather than only existing as a
+one-off setting in GitHub's UI. The matching DNS A records (pointing
+`parsnipia.com` at GitHub Pages' IPs) are configured with the domain
+registrar, outside this repo.
+
+A custom domain always serves a *project* site's files from its own
+root — unlike `https://julianbrowne.github.io/parsnipia/`, where
+`/parsnipia/` only exists because that's how GitHub Pages namespaces
+project sites under a github.io account. Since both URLs serve the
+exact same build, `base` in `vite.config.ts` is `"/"` to match the
+custom domain; GitHub Pages automatically redirects the github.io
+project URL to the custom domain once one is configured (dropping the
+`/parsnipia/` prefix in the process), so that URL keeps working too —
+just by redirecting rather than serving identical files at both paths.
