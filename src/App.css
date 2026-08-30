@@ -1,3 +1,18 @@
+.feature-section {
+  padding: 16px;
+  border-radius: 8px;
+
+  @media (max-width: 600px) {
+    padding: 12px;
+  }
+}
+
+/* A very subtle zebra stripe across the three sections, like alternating
+   rows in a data table — just enough to tell them apart at a glance. */
+.feature-section:nth-of-type(even) {
+  background: var(--code-bg);
+}
+
 .section-heading {
   font-size: 20px;
   margin: 0 0 12px;

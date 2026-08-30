@@ -22,6 +22,7 @@ describe("App", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { name: "Parsnipia" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /find a word/i })).toBeInTheDocument();
 
     // Both WordLookup and HiddenWords show a "words loaded" count once
     // their (identical, mocked) word list has loaded.
@@ -45,7 +46,7 @@ describe("App", () => {
     render(<App />);
 
     expect(
-      screen.getByRole("heading", { name: /cryptic clue strategies/i }),
+      screen.getByRole("heading", { name: /find a strategy/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /find strategies/i }),

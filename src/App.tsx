@@ -9,13 +9,20 @@ function App() {
     <>
       <Toolbar />
       <main className="page">
-        <WordLookup />
+        <section className="feature-section">
+          <h2 className="section-heading">Find A Word</h2>
+          <WordLookup />
+        </section>
         <hr className="section-divider" />
-        <h2 className="section-heading">Hidden words</h2>
-        <HiddenWords />
+        <section className="feature-section">
+          <h2 className="section-heading">Find Hidden Words</h2>
+          <HiddenWords />
+        </section>
         <hr className="section-divider" />
-        <h2 className="section-heading">Cryptic clue strategies</h2>
-        <CrypticClue />
+        <section className="feature-section">
+          <h2 className="section-heading">Find A Strategy</h2>
+          <CrypticClue />
+        </section>
       </main>
     </>
   );
