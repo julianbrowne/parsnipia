@@ -434,3 +434,104 @@
   color: var(--text);
   font-size: 15px;
 }
+
+.find-matching-word {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.find-matching-word__form {
+  display: flex;
+  gap: 8px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.find-matching-word__input {
+  flex: 1;
+  font: inherit;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+
+  @media (max-width: 600px) {
+    flex: initial;
+  }
+}
+
+.find-matching-word__input:focus-visible {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 1px;
+}
+
+.find-matching-word__submit {
+  font: inherit;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.find-matching-word__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.find-matching-word__status {
+  padding: 12px 16px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.find-matching-word__status--found {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.find-matching-word__status--not-found,
+.find-matching-word__status--error {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.find-matching-word__status--loading {
+  background: var(--code-bg);
+  color: var(--text);
+}
+
+.find-matching-word__status--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.find-matching-word__status--warning::before {
+  content: "⚠ ";
+}
+
+.find-matching-word__matches {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  columns: 2;
+}
+
+@media (max-width: 480px) {
+  .find-matching-word__matches {
+    columns: 1;
+  }
+}
+
+.find-matching-word__count {
+  color: var(--text);
+  font-size: 15px;
+}

@@ -2,12 +2,15 @@
 
 **[Try it live](https://julianbrowne.github.io/parsnipia/)**
 
-Parsnipia is a crossword solver's friend. Eventually it will take a string of
-letters — some of which may be `?` for an unknown letter — and offer:
+Parsnipia is a crossword solver's friend. Enter a string of letters — some
+of which may be `?` for an unknown letter — and it offers:
 
 - **Anagrams** of the letters
 - **Crossword solutions**: dictionary words matching a pattern with `?`
   wildcards
+- **Hidden words**: concealed in a sentence's letters, crossing word breaks
+- **Cryptic wordplay strategies**: indicators and letter substitutions found
+  in a full clue
 - **Thesaurus lookups**: words with a similar meaning
 
 ## This version
@@ -34,6 +37,11 @@ letters — some of which may be `?` for an unknown letter — and offer:
   hand-curated lookup table meant to grow over time (see
   [`src/substitutionStore/substitutionStore.ts`](src/substitutionStore/substitutionStore.ts),
   add new ones to `COMMON_SUBSTITUTIONS` as you come across them).
+- Enter a word and list every other word sharing a similar meaning — a
+  thesaurus lookup, for when you know roughly what the answer means but
+  not the word itself. Merges every sense and part of speech of the word
+  into one flat list (so "run" surfaces synonyms for the verb and the
+  noun together) rather than asking you to pick a sense first.
 
 ## Word source
 
@@ -75,6 +83,28 @@ npm run fetch-cryptic-indicators
 This one's slow (the server streams the whole table over the course of a
 minute or two) — it's not part of `npm run build` or CI, only run by hand
 when the source data needs refreshing.
+
+## Thesaurus source
+
+Synonyms come from [Open English WordNet](https://en-word.net) (the Global
+WordNet Association's actively-maintained fork of
+[Princeton WordNet](https://wordnet.princeton.edu)), licensed under the
+[Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/)
+— sharing this data requires attributing both Princeton WordNet and the
+English WordNet team, which the license notice at the top of the
+generated file (and the About page) both do.
+[`scripts/fetch-thesaurus.mjs`](scripts/fetch-thesaurus.mjs) downloads the
+JSON release (it ships as ~70 separate files — a word index plus a synset
+file per semantic category — split across `.zip`, `.xml`, and `.ttl`
+distributions; JSON was the most straightforward to parse without adding a
+dependency) and flattens it into a plain `word\tsynonym` lookup at
+[`public/data/thesaurus.tsv`](public/data/thesaurus.tsv). Requires `unzip`
+on `PATH` (present by default on macOS and GitHub Actions' `ubuntu-latest`
+runners) — Node has no built-in zip reader. To refresh it:
+
+```sh
+npm run fetch-thesaurus
+```
 
 ## Development
 

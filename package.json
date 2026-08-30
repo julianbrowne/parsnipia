@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "fetch-wordlist": "node scripts/fetch-wordlist.mjs",
-    "fetch-cryptic-indicators": "node scripts/fetch-cryptic-indicators.mjs"
+    "fetch-cryptic-indicators": "node scripts/fetch-cryptic-indicators.mjs",
+    "fetch-thesaurus": "node scripts/fetch-thesaurus.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

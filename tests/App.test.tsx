@@ -52,4 +52,15 @@ describe("App", () => {
       screen.getByRole("button", { name: /find strategies/i }),
     ).toBeInTheDocument();
   });
+
+  it("also mounts the thesaurus finder", async () => {
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", { name: /find a matching word/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /find matching words/i }),
+    ).toBeInTheDocument();
+  });
 });
