@@ -29,6 +29,11 @@
 .word-lookup__row {
   display: flex;
   gap: 8px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .word-lookup__input {
@@ -39,6 +44,10 @@
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
+
+  @media (max-width: 600px) {
+    flex: initial;
+  }
 }
 
 .word-lookup__input:focus-visible {
@@ -106,9 +115,19 @@
   color: var(--error);
 }
 
-.word-lookup__status--hint {
+.word-lookup__status--loading {
   background: var(--code-bg);
   color: var(--text);
+}
+
+.word-lookup__status--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.word-lookup__status--warning::before {
+  content: "⚠ ";
 }
 
 .word-lookup__matches {
@@ -137,6 +156,13 @@
 .hidden-words__row {
   display: flex;
   gap: 8px;
+
+  /* The sentence field wraps to its own full-width line; the length
+     field and button share the line below it, rather than three
+     controls squeezing onto one row. */
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+  }
 }
 
 .hidden-words__input {
@@ -147,6 +173,10 @@
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
+
+  @media (max-width: 600px) {
+    flex: 1 1 100%;
+  }
 }
 
 .hidden-words__length {
@@ -157,6 +187,13 @@
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
+
+  /* On its own line with the submit button, it only ever needs to fit a
+     couple of digits — leave the rest of the row to the button's label. */
+  @media (max-width: 600px) {
+    width: auto;
+    flex: 0 1 80px;
+  }
 }
 
 .hidden-words__input:focus-visible,
@@ -175,6 +212,10 @@
   color: var(--accent);
   cursor: pointer;
   white-space: nowrap;
+
+  @media (max-width: 600px) {
+    flex: 1;
+  }
 }
 
 .hidden-words__submit:disabled {
@@ -194,9 +235,19 @@
   color: var(--error);
 }
 
-.hidden-words__status--hint {
+.hidden-words__status--loading {
   background: var(--code-bg);
   color: var(--text);
+}
+
+.hidden-words__status--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.hidden-words__status--warning::before {
+  content: "⚠ ";
 }
 
 .hidden-words__results-count {
@@ -215,8 +266,9 @@
 
 .hidden-words__item {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 12px;
+  gap: 4px 12px;
   padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -224,11 +276,13 @@
 }
 
 .hidden-words__word {
+  flex: none;
   font-weight: 600;
   color: var(--text-h);
 }
 
 .hidden-words__preview {
+  min-width: 0;
   color: var(--text);
   font-size: 15px;
 }
@@ -255,6 +309,11 @@
 .cryptic-clue__form {
   display: flex;
   gap: 8px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .cryptic-clue__input {
@@ -265,6 +324,10 @@
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
+
+  @media (max-width: 600px) {
+    flex: initial;
+  }
 }
 
 .cryptic-clue__input:focus-visible {
@@ -301,9 +364,19 @@
   color: var(--error);
 }
 
-.cryptic-clue__status--hint {
+.cryptic-clue__status--loading {
   background: var(--code-bg);
   color: var(--text);
+}
+
+.cryptic-clue__status--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.cryptic-clue__status--warning::before {
+  content: "⚠ ";
 }
 
 .cryptic-clue__strategies-count,

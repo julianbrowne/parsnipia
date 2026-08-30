@@ -104,7 +104,7 @@ export function HiddenWords() {
       </form>
 
       {loadState.status === "loading" && (
-        <p role="status" className="hidden-words__status hidden-words__status--hint">
+        <p role="status" className="hidden-words__status hidden-words__status--loading">
           Loading dictionary…
         </p>
       )}
@@ -116,7 +116,7 @@ export function HiddenWords() {
       )}
 
       {isReady && hint && (
-        <p role="status" className="hidden-words__status hidden-words__status--hint">
+        <p role="status" className="hidden-words__status hidden-words__status--warning">
           {hint}
         </p>
       )}

@@ -103,7 +103,7 @@ export function CrypticClue() {
       </form>
 
       {loadState.status === "loading" && (
-        <p role="status" className="cryptic-clue__status cryptic-clue__status--hint">
+        <p role="status" className="cryptic-clue__status cryptic-clue__status--loading">
           Loading indicators…
         </p>
       )}
@@ -115,7 +115,7 @@ export function CrypticClue() {
       )}
 
       {isReady && hint && (
-        <p role="status" className="cryptic-clue__status cryptic-clue__status--hint">
+        <p role="status" className="cryptic-clue__status cryptic-clue__status--warning">
           {hint}
         </p>
       )}

@@ -114,7 +114,7 @@ export function WordLookup() {
       </form>
 
       {loadState.status === "loading" && (
-        <p role="status" className="word-lookup__status word-lookup__status--hint">
+        <p role="status" className="word-lookup__status word-lookup__status--loading">
           Loading dictionary…
         </p>
       )}
@@ -126,7 +126,7 @@ export function WordLookup() {
       )}
 
       {isReady && hint && (
-        <p role="status" className="word-lookup__status word-lookup__status--hint">
+        <p role="status" className="word-lookup__status word-lookup__status--warning">
           {hint}
         </p>
       )}
