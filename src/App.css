@@ -7,6 +7,12 @@
   }
 }
 
+/* The alternating background now does the job dividers used to —
+   just a gap between sections, not a line. */
+.feature-section + .feature-section {
+  margin-top: 24px;
+}
+
 /* A very subtle zebra stripe across the three sections, like alternating
    rows in a data table — just enough to tell them apart at a glance. */
 .feature-section:nth-of-type(even) {
@@ -16,12 +22,6 @@
 .section-heading {
   font-size: 20px;
   margin: 0 0 12px;
-}
-
-.section-divider {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 32px 0 24px;
 }
 
 .word-lookup {

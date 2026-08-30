@@ -13,12 +13,10 @@ function App() {
           <h2 className="section-heading">Find A Word</h2>
           <WordLookup />
         </section>
-        <hr className="section-divider" />
         <section className="feature-section">
           <h2 className="section-heading">Find Hidden Words</h2>
           <HiddenWords />
         </section>
-        <hr className="section-divider" />
         <section className="feature-section">
           <h2 className="section-heading">Find A Strategy</h2>
           <CrypticClue />
