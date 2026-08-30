@@ -1,16 +1,12 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { loadWordStore, normalizeWord, type WordStore } from "../wordStore/wordStore";
+import { useAsyncStore } from "../useAsyncStore/useAsyncStore";
 
 /**
  * The operation the Check button performs, chosen from the radio group.
  * More (thesaurus, ...) will join these later.
  */
 type Mode = "solve" | "anagram";
-
-type LoadState =
-  | { status: "loading" }
-  | { status: "error"; message: string }
-  | { status: "ready"; store: WordStore };
 
 type Result =
   | { kind: "single"; word: string; found: boolean }
@@ -33,31 +29,11 @@ const MODE_COPY: Record<Mode, { noneFound: (input: string) => string; joiner: st
 const MAX_DISPLAYED_MATCHES = 200;
 
 export function WordLookup() {
-  const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
+  const loadState = useAsyncStore<WordStore>(loadWordStore, "Failed to load the word list.");
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<Mode>("solve");
   const [result, setResult] = useState<Result>(null);
   const [hint, setHint] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadWordStore()
-      .then((store) => {
-        if (!cancelled) setLoadState({ status: "ready", store });
-      })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          setLoadState({
-            status: "error",
-            message:
-              error instanceof Error ? error.message : "Failed to load the word list.",
-          });
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

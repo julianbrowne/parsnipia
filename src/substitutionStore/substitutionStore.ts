@@ -6,6 +6,14 @@
 // COMMON_SUBSTITUTIONS directly below as you come across new ones in
 // real clues.
 
+import {
+  normalizePhrase,
+  createPhraseLookup,
+  findPhraseMatches,
+  type PhraseLookup,
+  type PhraseSpan,
+} from "../phraseMatch/phraseMatch";
+
 /** A word/phrase that can stand in for `letters` in a clue's wordplay. */
 export interface Substitution {
   phrase: string;
@@ -32,13 +40,9 @@ export const COMMON_SUBSTITUTIONS: Substitution[] = [
   { phrase: "thousand", letters: "m" },
 ];
 
-export interface SubstitutionStore {
+export interface SubstitutionStore extends PhraseLookup<string> {
   /** Number of distinct phrases held in the store. */
   readonly size: number;
-  /** The most words any known phrase spans (for bounding an n-gram search). */
-  readonly maxPhraseWords: number;
-  /** Every letter-sequence `phrase` (case-insensitively, whitespace-normalized) can substitute for. */
-  lookup(phrase: string): string[];
 }
 
 /**
@@ -46,20 +50,16 @@ export interface SubstitutionStore {
  * a clue) for lookup: trims, lower-cases, and collapses internal
  * whitespace.
  */
-export function normalizeSubstitutionPhrase(phrase: string): string {
-  return phrase.trim().toLowerCase().replace(/\s+/g, " ");
-}
+export const normalizeSubstitutionPhrase = normalizePhrase;
 
 export function createSubstitutionStore(
   entries: Substitution[] = COMMON_SUBSTITUTIONS,
 ): SubstitutionStore {
   const map = new Map<string, string[]>();
-  let maxPhraseWords = 0;
 
   for (const { phrase, letters } of entries) {
     const normalizedPhrase = normalizeSubstitutionPhrase(phrase);
     const normalizedLetters = letters.trim().toLowerCase();
-    maxPhraseWords = Math.max(maxPhraseWords, normalizedPhrase.split(" ").length);
 
     const existing = map.get(normalizedPhrase);
     if (existing) {
@@ -71,32 +71,15 @@ export function createSubstitutionStore(
     }
   }
 
-  return {
-    size: map.size,
-    maxPhraseWords,
-    lookup(phrase: string) {
-      return map.get(normalizeSubstitutionPhrase(phrase)) ?? [];
-    },
-  };
+  return { size: map.size, ...createPhraseLookup(map) };
 }
 
 /** Ready-to-use store built from COMMON_SUBSTITUTIONS — no fetch needed. */
 export const DEFAULT_SUBSTITUTION_STORE = createSubstitutionStore();
 
-/** Strips a token down to the letters (plus hyphens/apostrophes) used for matching. */
-function normalizeToken(token: string): string {
-  return token.toLowerCase().replace(/[^a-z'-]/g, "");
-}
-
 /** A candidate substitution: `tokens[startWord..endWord)` can stand in for `letters`. */
-export interface SubstitutionMatch {
-  /** The normalized phrase that matched. */
-  phrase: string;
+export interface SubstitutionMatch extends PhraseSpan {
   letters: string;
-  /** Index (inclusive) of the first matched word in the token list. */
-  startWord: number;
-  /** Index (exclusive) of the word after the match in the token list. */
-  endWord: number;
 }
 
 /**
@@ -108,25 +91,10 @@ export function findSubstitutionMatches(
   store: SubstitutionStore,
   tokens: string[],
 ): SubstitutionMatch[] {
-  const normalized = tokens.map(normalizeToken);
-  const matches: SubstitutionMatch[] = [];
-
-  for (let start = 0; start < normalized.length; start++) {
-    const words: string[] = [];
-    for (let end = start; end < normalized.length && words.length < store.maxPhraseWords; end++) {
-      const word = normalized[end];
-      if (word === "") {
-        break; // don't let a stray symbol-only token bridge a phrase
-      }
-      words.push(word);
-      const phrase = words.join(" ");
-      for (const letters of store.lookup(phrase)) {
-        matches.push({ phrase, letters, startWord: start, endWord: end + 1 });
-      }
-    }
-  }
-
-  return matches.sort(
-    (a, b) => b.endWord - b.startWord - (a.endWord - a.startWord) || a.startWord - b.startWord,
-  );
+  return findPhraseMatches(store, tokens, (letters, phrase, startWord, endWord) => ({
+    phrase,
+    letters,
+    startWord,
+    endWord,
+  }));
 }

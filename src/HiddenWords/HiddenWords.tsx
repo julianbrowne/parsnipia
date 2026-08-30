@@ -1,15 +1,11 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import {
   loadWordStore,
   findHiddenWords,
   type WordStore,
   type HiddenWordMatch,
 } from "../wordStore/wordStore";
-
-type LoadState =
-  | { status: "loading" }
-  | { status: "error"; message: string }
-  | { status: "ready"; store: WordStore };
+import { useAsyncStore } from "../useAsyncStore/useAsyncStore";
 
 type Result = { sentence: string; matches: HiddenWordMatch[] } | null;
 
@@ -36,31 +32,11 @@ function HighlightedSentence({
 }
 
 export function HiddenWords() {
-  const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
+  const loadState = useAsyncStore<WordStore>(loadWordStore, "Failed to load the word list.");
   const [sentence, setSentence] = useState("");
   const [length, setLength] = useState("");
   const [result, setResult] = useState<Result>(null);
   const [hint, setHint] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadWordStore()
-      .then((store) => {
-        if (!cancelled) setLoadState({ status: "ready", store });
-      })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          setLoadState({
-            status: "error",
-            message:
-              error instanceof Error ? error.message : "Failed to load the word list.",
-          });
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

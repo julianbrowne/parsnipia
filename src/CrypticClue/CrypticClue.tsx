@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import {
   loadIndicatorStore,
   tokenizeClue,
@@ -12,11 +12,7 @@ import {
   findSubstitutionMatches,
   type SubstitutionMatch,
 } from "../substitutionStore/substitutionStore";
-
-type LoadState =
-  | { status: "loading" }
-  | { status: "error"; message: string }
-  | { status: "ready"; store: IndicatorStore };
+import { useAsyncStore } from "../useAsyncStore/useAsyncStore";
 
 type Result = {
   tokens: string[];
@@ -54,32 +50,13 @@ function HighlightedClue({
 }
 
 export function CrypticClue() {
-  const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
+  const loadState = useAsyncStore<IndicatorStore>(
+    loadIndicatorStore,
+    "Failed to load the indicator list.",
+  );
   const [input, setInput] = useState("");
   const [result, setResult] = useState<Result>(null);
   const [hint, setHint] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadIndicatorStore()
-      .then((store) => {
-        if (!cancelled) setLoadState({ status: "ready", store });
-      })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          setLoadState({
-            status: "error",
-            message:
-              error instanceof Error
-                ? error.message
-                : "Failed to load the indicator list.",
-          });
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
