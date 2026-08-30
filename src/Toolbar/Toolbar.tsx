@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import "./Toolbar.css";
 
+/** The main app page (also where the logo links back to). */
+const HOME_URL = import.meta.env.BASE_URL;
 /** Where the hand-written about page lives (see public/about/). */
 const ABOUT_URL = `${import.meta.env.BASE_URL}about/index.html`;
 /** Where the hand-written test results page lives (see public/tests/). */
@@ -42,12 +44,14 @@ export function Toolbar() {
     <header className="toolbar">
       <div className="toolbar__inner">
         <div className="toolbar__start">
-          <img className="toolbar__logo" src={LOGO_URL} alt="" width={40} height={40} />
+          <a href={HOME_URL} aria-label="Parsnipa Verbum home">
+            <img className="toolbar__logo" src={LOGO_URL} alt="" width={40} height={40} />
+          </a>
         </div>
 
         <div className="toolbar__center">
-          <h1 className="toolbar__title">Parsnipia</h1>
-          <p className="toolbar__tagline">A crossword solver's friend</p>
+          <h1 className="toolbar__title">Parsnipa Verbum</h1>
+          <p className="toolbar__tagline">the crossword solver's friend</p>
         </div>
 
         <div className="toolbar__end" ref={menuRef}>

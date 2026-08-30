@@ -1,5 +1,5 @@
 .toolbar {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #67e463;
 }
 
 .toolbar__inner {
@@ -53,6 +53,8 @@
   font-size: 12px;
   line-height: 1.3;
   color: var(--text);
+  font-style: italic;
+  text-transform: lowercase;
 }
 
 .toolbar__end {
