@@ -1,0 +1,88 @@
+.test-results-page {
+  padding-bottom: 48px;
+}
+
+.test-results-page h1 {
+  font-size: 24px;
+  margin: 0 0 16px;
+}
+
+.test-results__summary {
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.test-results__summary--passed {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.test-results__summary--failed {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.test-results__summary--pending {
+  background: var(--code-bg);
+  color: var(--text);
+}
+
+.test-results__timestamp {
+  font-weight: 400;
+  font-size: 14px;
+  display: block;
+  margin-top: 4px;
+}
+
+.test-results__file {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.test-results__file h2 {
+  font-size: 16px;
+  margin: 0 0 4px;
+  font-family: var(--mono);
+}
+
+.test-results__tests {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.test-results__tests li {
+  padding: 4px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: baseline;
+}
+
+.test-results__mark {
+  flex: none;
+  font-weight: 700;
+}
+
+.test-results__mark--passed {
+  color: var(--success);
+}
+
+.test-results__mark--failed {
+  color: var(--error);
+}
+
+.test-results__failure-message {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 13px;
+  white-space: pre-wrap;
+  background: var(--code-bg);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 4px 0 4px 24px;
+}

@@ -20,14 +20,17 @@ export default defineConfig(() => ({
   build: {
     outDir: "docs",
     rollupOptions: {
-      // Multi-page build: the About page is its own real React page
-      // (see about/index.html and src/About/), not a hand-written
-      // static file, so it needs its own entry point alongside the
-      // main app. Vite preserves each input's path under outDir, so
-      // this still builds to docs/about/index.html as before.
+      // Multi-page build: the About and Tests pages are their own real
+      // React pages (see about/index.html + src/About/, and
+      // tests/index.html + src/TestResults/), not hand-written static
+      // files, so each needs its own entry point alongside the main
+      // app. Vite preserves each input's path under outDir, so these
+      // still build to docs/about/index.html and docs/tests/index.html
+      // as before.
       input: {
         main: resolve(import.meta.dirname, "index.html"),
         about: resolve(import.meta.dirname, "about/index.html"),
+        tests: resolve(import.meta.dirname, "tests/index.html"),
       },
     },
   },
@@ -35,10 +38,10 @@ export default defineConfig(() => ({
   test: {
     environment: "jsdom",
     setupFiles: ["./tests/setupTests.ts"],
-    // In addition to console output, write a JSON results file that
-    // public/tests/index.html renders as a browsable pass/fail report
-    // (linked from the app's toolbar). It's written under public/ so it
-    // ships as part of the built site.
+    // In addition to console output, write a JSON results file that the
+    // Tests page (src/TestResults/) fetches at runtime and renders as a
+    // browsable pass/fail report (linked from the app's toolbar). It's
+    // written under public/ so it ships as part of the built site.
     reporters: ["default", "json"],
     outputFile: {
       json: "./public/tests/results.json",

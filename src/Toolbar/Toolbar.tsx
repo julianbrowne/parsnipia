@@ -5,7 +5,7 @@ import "./Toolbar.css";
 const HOME_URL = import.meta.env.BASE_URL;
 /** The About page — its own React page, built from about/index.html (see src/About/). */
 const ABOUT_URL = `${import.meta.env.BASE_URL}about/index.html`;
-/** Where the hand-written test results page lives (see public/tests/). */
+/** The Tests page — its own React page, built from tests/index.html (see src/TestResults/). */
 const TEST_REPORT_URL = `${import.meta.env.BASE_URL}tests/index.html`;
 const LOGO_URL = `${import.meta.env.BASE_URL}assets/images/parsnipia-logo.png`;
 

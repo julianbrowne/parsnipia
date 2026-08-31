@@ -1,0 +1,1 @@
+import{i as e}from"./Toolbar-7SY7mwqY.js";var t=e();function n(e,n){let[r,i]=(0,t.useState)({status:`loading`});return(0,t.useEffect)(()=>{let t=!1;return e().then(e=>{t||i({status:`ready`,store:e})}).catch(e=>{t||i({status:`error`,message:e instanceof Error?e.message:n})}),()=>{t=!0}},[]),r}export{n as t};
