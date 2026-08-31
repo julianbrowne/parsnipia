@@ -86,21 +86,21 @@ when the source data needs refreshing.
 
 ## Thesaurus source
 
-Synonyms come from [Open English WordNet](https://en-word.net) (the Global
-WordNet Association's actively-maintained fork of
-[Princeton WordNet](https://wordnet.princeton.edu)), licensed under the
-[Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/)
-— sharing this data requires attributing both Princeton WordNet and the
-English WordNet team, which the license notice at the top of the
-generated file (and the About page) both do.
-[`scripts/fetch-thesaurus.mjs`](scripts/fetch-thesaurus.mjs) downloads the
-JSON release (it ships as ~70 separate files — a word index plus a synset
-file per semantic category — split across `.zip`, `.xml`, and `.ttl`
-distributions; JSON was the most straightforward to parse without adding a
-dependency) and flattens it into a plain `word\tsynonym` lookup at
-[`public/data/thesaurus.tsv`](public/data/thesaurus.tsv). Requires `unzip`
-on `PATH` (present by default on macOS and GitHub Actions' `ubuntu-latest`
-runners) — Node has no built-in zip reader. To refresh it:
+Synonyms come from [Moby Thesaurus](https://github.com/words/moby), Grady
+Ward's word-relation list compiled for Project Gutenberg's Moby lexicon
+project and placed in the public domain — no attribution is legally
+required, though it's credited on the About page anyway as good practice.
+Moby groups words into loose, broad "related terms" lists rather than
+WordNet's strict sense-based synsets, which is deliberate: it's what
+surfaces a match like "lady" for "woman", which WordNet's tighter model
+missed.
+[`scripts/fetch-thesaurus.mjs`](scripts/fetch-thesaurus.mjs) downloads
+Moby's `words.txt` (pinned to a specific commit, for reproducible builds),
+keeps only pairs where both words appear in this app's own UK word list
+(dropping multi-word phrases and anything that couldn't be a crossword
+answer here anyway), adds the reverse of each pair since Moby's own list is
+one-directional, and writes the result to
+[`public/data/thesaurus.tsv`](public/data/thesaurus.tsv). To refresh it:
 
 ```sh
 npm run fetch-thesaurus
