@@ -1,0 +1,42 @@
+.about-page {
+  padding-bottom: 48px;
+}
+
+.about-page h1 {
+  font-size: 24px;
+  margin: 0 0 16px;
+}
+
+.about-page h2 {
+  font-size: 18px;
+  margin: 32px 0 12px;
+}
+
+.about-page a {
+  color: var(--accent);
+}
+
+.credits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.credits li {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.credits .name {
+  display: block;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.credits .detail {
+  font-size: 14px;
+}

@@ -3,7 +3,7 @@ import "./Toolbar.css";
 
 /** The main app page (also where the logo links back to). */
 const HOME_URL = import.meta.env.BASE_URL;
-/** Where the hand-written about page lives (see public/about/). */
+/** The About page — its own React page, built from about/index.html (see src/About/). */
 const ABOUT_URL = `${import.meta.env.BASE_URL}about/index.html`;
 /** Where the hand-written test results page lives (see public/tests/). */
 const TEST_REPORT_URL = `${import.meta.env.BASE_URL}tests/index.html`;

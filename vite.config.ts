@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
@@ -18,6 +19,17 @@ export default defineConfig(() => ({
   // deploys, no build step required on GitHub's side.
   build: {
     outDir: "docs",
+    rollupOptions: {
+      // Multi-page build: the About page is its own real React page
+      // (see about/index.html and src/About/), not a hand-written
+      // static file, so it needs its own entry point alongside the
+      // main app. Vite preserves each input's path under outDir, so
+      // this still builds to docs/about/index.html as before.
+      input: {
+        main: resolve(import.meta.dirname, "index.html"),
+        about: resolve(import.meta.dirname, "about/index.html"),
+      },
+    },
   },
   plugins: [react()],
   test: {
