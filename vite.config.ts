@@ -1,6 +1,28 @@
+import { copyFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { defineConfig } from "vitest/config";
+import { defineConfig, type Plugin } from "vitest/config";
 import react from "@vitejs/plugin-react";
+
+/**
+ * About and Tests are routed client-side (see src/Router/), so there's
+ * only ever one real HTML file — but GitHub Pages' static file server
+ * has no idea about that: a direct visit or refresh on /about or /tests
+ * would just 404, since no such file exists. Copying the built
+ * index.html to 404.html is the standard workaround for static SPA
+ * hosts with a configurable 404 page: GitHub Pages serves it for any
+ * unmatched path, the app boots exactly as it would from "/", and the
+ * router then reads the actual URL and shows the right page.
+ */
+function spaFallback404(): Plugin {
+  return {
+    name: "spa-fallback-404",
+    apply: "build",
+    closeBundle: async () => {
+      const outDir = resolve(import.meta.dirname, "docs");
+      await copyFile(resolve(outDir, "index.html"), resolve(outDir, "404.html"));
+    },
+  };
+}
 
 // https://vite.dev/config/
 export default defineConfig(() => ({
@@ -19,22 +41,8 @@ export default defineConfig(() => ({
   // deploys, no build step required on GitHub's side.
   build: {
     outDir: "docs",
-    rollupOptions: {
-      // Multi-page build: the About and Tests pages are their own real
-      // React pages (see about/index.html + src/About/, and
-      // tests/index.html + src/TestResults/), not hand-written static
-      // files, so each needs its own entry point alongside the main
-      // app. Vite preserves each input's path under outDir, so these
-      // still build to docs/about/index.html and docs/tests/index.html
-      // as before.
-      input: {
-        main: resolve(import.meta.dirname, "index.html"),
-        about: resolve(import.meta.dirname, "about/index.html"),
-        tests: resolve(import.meta.dirname, "tests/index.html"),
-      },
-    },
   },
-  plugins: [react()],
+  plugins: [react(), spaFallback404()],
   test: {
     environment: "jsdom",
     setupFiles: ["./tests/setupTests.ts"],

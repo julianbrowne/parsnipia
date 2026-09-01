@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { TestResults } from "../../src/TestResults/TestResults";
+import { renderWithRouter } from "../testUtils/renderWithRouter";
 
 describe("TestResults", () => {
   const originalFetch = globalThis.fetch;
@@ -15,7 +16,7 @@ describe("TestResults", () => {
       json: () => Promise.resolve({ numTotalTests: 0, numPassedTests: 0, numFailedTests: 0, testResults: [] }),
     } as Response);
 
-    render(<TestResults />);
+    renderWithRouter(<TestResults />);
 
     expect(screen.getByRole("heading", { name: "Parsnipia Verbum" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Test Results" })).toBeInTheDocument();
@@ -24,7 +25,7 @@ describe("TestResults", () => {
   it("shows a friendly message when no results have been generated yet", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: false } as Response);
 
-    render(<TestResults />);
+    renderWithRouter(<TestResults />);
 
     expect(await screen.findByText(/no test results found yet/i)).toBeInTheDocument();
   });
@@ -55,7 +56,7 @@ describe("TestResults", () => {
         }),
     } as Response);
 
-    render(<TestResults />);
+    renderWithRouter(<TestResults />);
 
     expect(await screen.findByText("1 / 2 tests passed (1 failed)")).toBeInTheDocument();
     expect(screen.getByText("tests/Example/Example.test.tsx")).toBeInTheDocument();

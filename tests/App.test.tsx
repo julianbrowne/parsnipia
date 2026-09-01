@@ -15,6 +15,7 @@ describe("App", () => {
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
+    window.history.replaceState({}, "", "/");
   });
 
   it("renders the heading and lets a user look up a word end-to-end", async () => {
@@ -62,5 +63,34 @@ describe("App", () => {
     expect(
       screen.getByRole("button", { name: /find matching words/i }),
     ).toBeInTheDocument();
+  });
+
+  it("renders the About page directly when the URL is /about", () => {
+    window.history.replaceState({}, "", "/about");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "About Parsnipia" })).toBeInTheDocument();
+  });
+
+  it("renders the Tests page directly when the URL is /tests", async () => {
+    window.history.replaceState({}, "", "/tests");
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false } as Response);
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "Test Results" })).toBeInTheDocument();
+    expect(await screen.findByText(/no test results found yet/i)).toBeInTheDocument();
+  });
+
+  it("navigates to About via the toolbar without a full page reload", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: /menu/i }));
+    await user.click(screen.getByRole("link", { name: "About" }));
+
+    expect(screen.getByRole("heading", { name: "About Parsnipia" })).toBeInTheDocument();
+    expect(window.location.pathname).toBe("/about");
   });
 });

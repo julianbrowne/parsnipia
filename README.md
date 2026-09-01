@@ -119,12 +119,28 @@ npm run lint       # lint with oxlint
 
 Tests live in [`tests/`](tests) (mirroring the structure of `src/`), not
 alongside the source files. Running `npm test` also writes
-`public/tests/results.json`, which [`public/tests/index.html`](public/tests/index.html) —
-a small hand-written report page, not generated — renders into a
-browsable pass/fail summary. It's linked from the toolbar's "Tests" link
-in the top right of the app, and links back to the app in turn. Since
-`results.json` is a build artifact (gitignored), run `npm test` at least
-once after cloning before opening the report locally.
+`public/tests/results.json`, which the Tests page
+([`src/TestResults/`](src/TestResults)) fetches at runtime and renders as
+a browsable pass/fail summary — it's linked from the toolbar's "Tests"
+link in the top right of the app. Since `results.json` is a build
+artifact (gitignored), run `npm test` at least once after cloning before
+opening the report locally.
+
+## Pages and routing
+
+Besides the main app, there's an About page (credits and licenses) and
+the Tests page above — both real React pages
+([`src/About/`](src/About), [`src/TestResults/`](src/TestResults)),
+routed client-side at `/about` and `/tests` (see
+[`src/Router/`](src/Router), a small hand-rolled router — there's only
+three flat pages here, not enough to justify a routing library). There's
+still only one HTML file in the whole build
+([`docs/index.html`](docs/index.html)); GitHub Pages' static file server
+doesn't know that, though, so a direct visit or refresh on `/about` or
+`/tests` would 404 without help. `vite.config.ts` copies the built
+`index.html` to `docs/404.html` after every build — GitHub Pages serves
+that for any unmatched path, the app boots exactly as it would from `/`,
+and the router reads the real URL from there.
 
 ## Deployment
 

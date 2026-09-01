@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "../Router/Router";
 import "./Toolbar.css";
 
 /** The main app page (also where the logo links back to). */
 const HOME_URL = import.meta.env.BASE_URL;
-/** The About page — its own React page, built from about/index.html (see src/About/). */
-const ABOUT_URL = `${import.meta.env.BASE_URL}about/index.html`;
-/** The Tests page — its own React page, built from tests/index.html (see src/TestResults/). */
-const TEST_REPORT_URL = `${import.meta.env.BASE_URL}tests/index.html`;
+/** The About page (see src/About/), routed client-side — see src/Router/. */
+const ABOUT_URL = `${import.meta.env.BASE_URL}about`;
+/** The Tests page (see src/TestResults/), routed client-side — see src/Router/. */
+const TEST_REPORT_URL = `${import.meta.env.BASE_URL}tests`;
 const LOGO_URL = `${import.meta.env.BASE_URL}assets/images/parsnipia-logo.png`;
 
 /**
@@ -44,9 +45,9 @@ export function Toolbar() {
     <header className="toolbar">
       <div className="toolbar__inner">
         <div className="toolbar__start">
-          <a href={HOME_URL} aria-label="Parsnipia Verbum home">
+          <Link to={HOME_URL} aria-label="Parsnipia Verbum home">
             <img className="toolbar__logo" src={LOGO_URL} alt="" width={40} height={40} />
-          </a>
+          </Link>
         </div>
 
         <div className="toolbar__center">
@@ -67,20 +68,16 @@ export function Toolbar() {
           </button>
           {menuOpen && (
             <nav className="toolbar__menu" aria-label="Site">
-              <a
-                className="toolbar__link"
-                href={ABOUT_URL}
-                onClick={() => setMenuOpen(false)}
-              >
+              <Link className="toolbar__link" to={ABOUT_URL} onClick={() => setMenuOpen(false)}>
                 About
-              </a>
-              <a
+              </Link>
+              <Link
                 className="toolbar__link"
-                href={TEST_REPORT_URL}
+                to={TEST_REPORT_URL}
                 onClick={() => setMenuOpen(false)}
               >
                 Tests
-              </a>
+              </Link>
             </nav>
           )}
         </div>
