@@ -11,25 +11,29 @@ export function About() {
     <>
       <Toolbar />
       <main className="page about-page">
-        <h1>About Parsnipia</h1>
+        <h1>Parsnipia Verbum</h1>
         <p>
-          Parsnipia is a crossword solver's friend. Enter a word — with{" "}
-          <code>?</code> for any unknown letters — to check it against the
-          dictionary, list every word matching that pattern, or list its
-          anagrams. Enter a sentence and a length to find words hidden in its
-          letters. Or enter a full cryptic clue to get back a list of
-          candidate wordplay strategies: known indicators and letter
-          substitutions, each highlighted in place with a plain-English
-          explanation of what it suggests. Or enter a word to find others
-          with a similar meaning — a thesaurus lookup, for when you know
-          roughly what the answer means but not the word itself.
+          Parsnipia Verbum? Yes. It's a play on Principia Mathematica, but with
+          a bonus parsnip thrown in. No, it does not make any sense.
         </p>
         <p>
-          It's a work in progress, built to grow alongside whatever comes up
-          while actually solving crosswords.
+          The parsnipia is a handy all-in-one tool for solving crosswords, 
+          created because all the others on the web seemed to have far too many
+          ads or didn't quite have the right features (like search for thesaurus
+          entries by length of word).
+        </p>
+        <p>
+          That's it. Enjoy using it and if you have any suggestions please
+          email us at parsnipia@webskill.com - always happy to find ways
+          to improve the app.
         </p>
 
         <h2>Open source &amp; free resources used</h2>
+        <p>
+          Parsnipia comes to you via the gift of quite a few open source
+          software packages and assets. Here are the main ones deserving
+          a mention.
+        </p>
         <ul className="credits">
           <li>
             <span className="name">React</span>
