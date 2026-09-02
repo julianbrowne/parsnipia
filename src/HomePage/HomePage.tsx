@@ -3,6 +3,7 @@ import { WordLookup } from "../WordLookup/WordLookup";
 import { HiddenWords } from "../HiddenWords/HiddenWords";
 import { CrypticClue } from "../CrypticClue/CrypticClue";
 import { FindMatchingWord } from "../FindMatchingWord/FindMatchingWord";
+import { FindAWordle } from "../FindAWordle/FindAWordle";
 import "./HomePage.css";
 
 /** The main app page: the toolbar plus all four lookup features. */
@@ -26,6 +27,10 @@ export function HomePage() {
         <section className="feature-section">
           <h2 className="section-heading">Find A Matching Word</h2>
           <FindMatchingWord />
+        </section>
+        <section className="feature-section">
+          <h2 className="section-heading">Find a Wordle</h2>
+          <FindAWordle />
         </section>
       </main>
     </>

@@ -23,7 +23,8 @@ describe("App", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { name: "Parsnipia Verbum" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /find a word/i })).toBeInTheDocument();
+    // Not /find a word/i: that also matches the "Find a Wordle" heading.
+    expect(screen.getByRole("heading", { name: "Find A Word" })).toBeInTheDocument();
 
     // Both WordLookup and HiddenWords show a "words loaded" count once
     // their (identical, mocked) word list has loaded.
@@ -65,12 +66,24 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
+  it("also mounts the Wordle solver", async () => {
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "Find a Wordle" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /find wordle matches/i }),
+    ).toBeInTheDocument();
+  });
+
   it("renders the About page directly when the URL is /about", () => {
     window.history.replaceState({}, "", "/about");
 
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "About Parsnipia" })).toBeInTheDocument();
+    // The About page's own content repeats the toolbar's "Parsnipia
+    // Verbum" title as its own heading (explaining the name is the
+    // point of the page), so match on body copy unique to it instead.
+    expect(screen.getByText(/play on Principia Mathematica/i)).toBeInTheDocument();
   });
 
   it("renders the Tests page directly when the URL is /tests", async () => {
@@ -90,7 +103,7 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: /menu/i }));
     await user.click(screen.getByRole("link", { name: "About" }));
 
-    expect(screen.getByRole("heading", { name: "About Parsnipia" })).toBeInTheDocument();
+    expect(screen.getByText(/play on Principia Mathematica/i)).toBeInTheDocument();
     expect(window.location.pathname).toBe("/about");
   });
 });

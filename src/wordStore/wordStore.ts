@@ -23,6 +23,18 @@ export interface WordStore {
    * alphabetical order.
    */
   findAnagrams(letters: string): string[];
+  /**
+   * All known words (case-insensitively) matching `pattern` — like
+   * `findMatches`, `?` stands in for a letter in an unknown position —
+   * that also contain every letter in `requiredLetters` at least as
+   * many times as it appears there (duplicates count, e.g.
+   * `requiredLetters` of "ee" needs two E's somewhere in the word).
+   * Built for the Wordle solver: `pattern` captures letters known to be
+   * in a specific position, `requiredLetters` captures letters known to
+   * be in the word but not which position. Matches must be the same
+   * length as `pattern`. Returned in alphabetical order.
+   */
+  findWordleMatches(pattern: string, requiredLetters: string): string[];
 }
 
 /** A dictionary word found running contiguously through a sentence's letters. */
@@ -142,6 +154,15 @@ export function createWordStore(words: Set<string>): WordStore {
       const required = countLetters(normalized.replace(/\?/g, ""));
       const candidates = wordsByLength.get(normalized.length) ?? [];
       return candidates.filter((word) => containsRequiredLetters(word, required)).sort();
+    },
+    findWordleMatches(pattern: string, requiredLetters: string) {
+      const normalizedPattern = normalizeWord(pattern);
+      const regexp = patternToRegExp(normalizedPattern);
+      const required = countLetters(normalizeWord(requiredLetters));
+      const candidates = wordsByLength.get(normalizedPattern.length) ?? [];
+      return candidates
+        .filter((word) => regexp.test(word) && containsRequiredLetters(word, required))
+        .sort();
     },
   };
 }

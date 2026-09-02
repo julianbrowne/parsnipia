@@ -12,6 +12,7 @@ of which may be `?` for an unknown letter — and it offers:
 - **Cryptic wordplay strategies**: indicators and letter substitutions found
   in a full clue
 - **Thesaurus lookups**: words with a similar meaning
+- **Wordle solving**: known letters in known and unknown positions
 
 ## This version
 
@@ -42,6 +43,15 @@ of which may be `?` for an unknown letter — and it offers:
   not the word itself. Merges every sense and part of speech of the word
   into one flat list (so "run" surfaces synonyms for the verb and the
   noun together) rather than asking you to pick a sense first.
+- **Find a Wordle**: a 5-box grid for letters you know are in a specific
+  position (type to fill a box, and focus moves on to the next one
+  automatically), plus a separate field for letters you know are in the
+  word but not where — typing a letter into the grid removes it from that
+  field automatically, since it's no longer "unknown position". That
+  field's own length is capped at 5 minus however many grid boxes are
+  filled, since between the two there are only 5 letters to place. Search
+  returns every dictionary word matching the grid exactly and containing
+  every letter from the unknown-position field.
 
 ## Word source
 

@@ -559,3 +559,146 @@
   color: var(--text);
   font-size: 15px;
 }
+
+.find-a-wordle {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.find-a-wordle__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.find-a-wordle__grid {
+  display: flex;
+  gap: 8px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.find-a-wordle__box {
+  width: 44px;
+  height: 44px;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+
+  @media (max-width: 600px) {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.find-a-wordle__row {
+  display: flex;
+  gap: 8px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.find-a-wordle__unknown {
+  flex: 1;
+  font: inherit;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  text-transform: uppercase;
+
+  @media (max-width: 600px) {
+    flex: initial;
+  }
+}
+
+.find-a-wordle__box:focus-visible,
+.find-a-wordle__unknown:focus-visible {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 1px;
+}
+
+.find-a-wordle__box:disabled,
+.find-a-wordle__unknown:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.find-a-wordle__submit {
+  font: inherit;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.find-a-wordle__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.find-a-wordle__status {
+  padding: 12px 16px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.find-a-wordle__status--found {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.find-a-wordle__status--not-found,
+.find-a-wordle__status--error {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.find-a-wordle__status--loading {
+  background: var(--code-bg);
+  color: var(--text);
+}
+
+.find-a-wordle__status--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.find-a-wordle__status--warning::before {
+  content: "⚠ ";
+}
+
+.find-a-wordle__matches {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  columns: 2;
+}
+
+@media (max-width: 480px) {
+  .find-a-wordle__matches {
+    columns: 1;
+  }
+}
+
+.find-a-wordle__count {
+  color: var(--text);
+  font-size: 15px;
+}

@@ -143,6 +143,55 @@ describe("findAnagrams", () => {
   });
 });
 
+describe("findWordleMatches", () => {
+  const store = createWordStore(
+    new Set(["stone", "store", "scone", "shore", "scare", "spare", "cat"]),
+  );
+
+  it("finds every word matching a fixed-position pattern", () => {
+    expect(store.findWordleMatches("st???", "")).toEqual(["stone", "store"]);
+  });
+
+  it("also requires every letter in requiredLetters to be present somewhere", () => {
+    // fixed: s _ _ r e; free-floating: must also contain a "c"
+    expect(store.findWordleMatches("s??re", "c")).toEqual(["scare"]);
+  });
+
+  it("is case-insensitive for both pattern and requiredLetters", () => {
+    expect(store.findWordleMatches("S??RE", "C")).toEqual(["scare"]);
+  });
+
+  it("only matches words of the same length as the pattern", () => {
+    expect(store.findWordleMatches("???", "")).toEqual(["cat"]);
+  });
+
+  it("matches every word of that length when the pattern is all wildcards and nothing is required", () => {
+    expect(store.findWordleMatches("?????", "")).toEqual([
+      "scare",
+      "scone",
+      "shore",
+      "spare",
+      "stone",
+      "store",
+    ]);
+  });
+
+  it("requires enough of a repeated required letter, not just its presence", () => {
+    const repeats = createWordStore(new Set(["eaves", "spare"]));
+    // requiredLetters "ee" needs two E's somewhere in the word
+    expect(repeats.findWordleMatches("?????", "ee")).toEqual(["eaves"]);
+  });
+
+  it("returns an empty array when nothing matches", () => {
+    expect(store.findWordleMatches("z????", "")).toEqual([]);
+    expect(store.findWordleMatches("?????", "zzz")).toEqual([]);
+  });
+
+  it("treats regex-special characters in the pattern literally", () => {
+    expect(store.findWordleMatches("s.one", "")).toEqual([]);
+  });
+});
+
 describe("findHiddenWords", () => {
   const store = createWordStore(new Set(["cat", "art"]));
 
