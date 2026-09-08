@@ -190,6 +190,26 @@ describe("findWordleMatches", () => {
   it("treats regex-special characters in the pattern literally", () => {
     expect(store.findWordleMatches("s.one", "")).toEqual([]);
   });
+
+  it("excludes words containing any letter in excludedLetters", () => {
+    expect(store.findWordleMatches("?????", "", "c")).toEqual([
+      "shore",
+      "spare",
+      "stone",
+      "store",
+    ]);
+  });
+
+  it("is case-insensitive for excludedLetters", () => {
+    expect(store.findWordleMatches("?????", "", "C")).not.toContain("scone");
+    expect(store.findWordleMatches("?????", "", "C")).not.toContain("scare");
+  });
+
+  it("treats an empty excludedLetters as excluding nothing", () => {
+    expect(store.findWordleMatches("st???", "")).toEqual(
+      store.findWordleMatches("st???", "", ""),
+    );
+  });
 });
 
 describe("findHiddenWords", () => {

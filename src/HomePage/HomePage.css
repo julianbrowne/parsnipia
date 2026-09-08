@@ -625,6 +625,12 @@
   }
 }
 
+.find-a-wordle__unknown::placeholder {
+  /* Letters typed here are uppercased, but the placeholder text itself
+     should read like every other placeholder on the page. */
+  text-transform: none;
+}
+
 .find-a-wordle__box:focus-visible,
 .find-a-wordle__unknown:focus-visible {
   outline: 2px solid var(--accent-border);

@@ -5,7 +5,12 @@ import { useAsyncStore } from "../useAsyncStore/useAsyncStore";
 /** Wordle words are always exactly this many letters. */
 const WORD_LENGTH = 5;
 
-type Result = { pattern: string; requiredLetters: string; matches: string[] } | null;
+type Result = {
+  pattern: string;
+  requiredLetters: string;
+  excludedLetters: string;
+  matches: string[];
+} | null;
 
 /** Cap how many matches we render, so a wide-open board doesn't flood the page. */
 const MAX_DISPLAYED_MATCHES = 200;
@@ -20,6 +25,7 @@ export function FindAWordle() {
   const loadState = useAsyncStore<WordStore>(loadWordStore, "Failed to load the word list.");
   const [letters, setLetters] = useState<string[]>(() => Array(WORD_LENGTH).fill(""));
   const [unknownLetters, setUnknownLetters] = useState("");
+  const [excludedLetters, setExcludedLetters] = useState("");
   const [result, setResult] = useState<Result>(null);
   const [hint, setHint] = useState<string | null>(null);
   const boxRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -51,6 +57,10 @@ export function FindAWordle() {
       setUnknownLetters(
         removeFirstOccurrence(unknownLetters, upper).slice(0, nextMaxUnknownLength),
       );
+
+      // This letter is now known to be in the answer, so it can no longer
+      // sit in the "known not to be in the answer" list.
+      setExcludedLetters([...excludedLetters].filter((existing) => existing !== upper).join(""));
     }
   }
 
@@ -62,14 +72,38 @@ export function FindAWordle() {
 
   function handleUnknownLettersChange(rawValue: string) {
     const filtered = rawValue.toUpperCase().replace(/[^A-Z]/g, "");
-    setUnknownLetters(filtered.slice(0, maxUnknownLength));
+    const next = filtered.slice(0, maxUnknownLength);
+    setUnknownLetters(next);
+
+    // These letters are now known to be in the answer, so they can no
+    // longer sit in the "known not to be in the answer" list.
+    setExcludedLetters(
+      excludedLetters
+        .split("")
+        .filter((char) => !next.includes(char))
+        .join(""),
+    );
+  }
+
+  function handleExcludedLettersChange(rawValue: string) {
+    const filtered = rawValue.toUpperCase().replace(/[^A-Z]/g, "");
+
+    // Letters already known to be in the answer — in place or not —
+    // can't also be marked as known not to be in the answer.
+    const knownLetters = new Set([...letters, ...unknownLetters].filter((char) => char !== ""));
+    setExcludedLetters(
+      filtered
+        .split("")
+        .filter((char) => !knownLetters.has(char))
+        .join(""),
+    );
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (loadState.status !== "ready") return;
 
-    if (filledCount === 0 && unknownLetters === "") {
+    if (filledCount === 0 && unknownLetters === "" && excludedLetters === "") {
       setHint("Enter at least one letter, known position or not.");
       setResult(null);
       return;
@@ -80,7 +114,8 @@ export function FindAWordle() {
     setResult({
       pattern,
       requiredLetters: unknownLetters,
-      matches: loadState.store.findWordleMatches(pattern, unknownLetters),
+      excludedLetters,
+      matches: loadState.store.findWordleMatches(pattern, unknownLetters, excludedLetters),
     });
   }
 
@@ -122,10 +157,28 @@ export function FindAWordle() {
             id="find-a-wordle-unknown"
             className="find-a-wordle__unknown"
             type="text"
-            placeholder="Known letters, any position…"
+            placeholder="known letters, any position…"
             value={unknownLetters}
             onChange={(event) => handleUnknownLettersChange(event.target.value)}
             disabled={!isReady || maxUnknownLength === 0}
+            autoComplete="off"
+            autoCapitalize="off"
+            spellCheck={false}
+          />
+        </div>
+
+        <div className="find-a-wordle__row">
+          <label htmlFor="find-a-wordle-excluded" className="visually-hidden">
+            Letters known not to be in the answer
+          </label>
+          <input
+            id="find-a-wordle-excluded"
+            className="find-a-wordle__unknown"
+            type="text"
+            placeholder="letters not in the answer…"
+            value={excludedLetters}
+            onChange={(event) => handleExcludedLettersChange(event.target.value)}
+            disabled={!isReady}
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}
@@ -157,7 +210,8 @@ export function FindAWordle() {
       {loadState.status === "ready" && !hint && result && result.matches.length === 0 && (
         <p role="status" className="find-a-wordle__status find-a-wordle__status--not-found">
           ✗ No words match “{result.pattern}”
-          {result.requiredLetters ? ` containing “${result.requiredLetters}”` : ""}.
+          {result.requiredLetters ? ` containing “${result.requiredLetters}”` : ""}
+          {result.excludedLetters ? ` excluding “${result.excludedLetters}”` : ""}.
         </p>
       )}
 
@@ -167,6 +221,7 @@ export function FindAWordle() {
             ✓ {result.matches.length} word{result.matches.length === 1 ? "" : "s"} match “
             {result.pattern}”
             {result.requiredLetters ? ` containing “${result.requiredLetters}”` : ""}
+            {result.excludedLetters ? ` excluding “${result.excludedLetters}”` : ""}
             {result.matches.length > MAX_DISPLAYED_MATCHES
               ? ` (showing first ${MAX_DISPLAYED_MATCHES})`
               : ""}

@@ -22,6 +22,10 @@ function unknownField() {
   return screen.getByRole("textbox", { name: /unknown position/i });
 }
 
+function excludedField() {
+  return screen.getByRole("textbox", { name: /not to be in the answer/i });
+}
+
 describe("FindAWordle", () => {
   beforeEach(() => {
     mockedLoadWordStore.mockReset();
@@ -200,5 +204,46 @@ describe("FindAWordle", () => {
     render(<FindAWordle />);
 
     expect(await screen.findByText(/2 words loaded/i)).toBeInTheDocument();
+  });
+
+  it("excludes words containing a letter marked as not in the answer", async () => {
+    mockedLoadWordStore.mockResolvedValue(
+      createWordStore(new Set(["stone", "store", "scone"])),
+    );
+    const user = userEvent.setup();
+    render(<FindAWordle />);
+
+    await screen.findByText(/words loaded/i);
+    await user.type(excludedField(), "c");
+    await user.click(screen.getByRole("button", { name: /find wordle matches/i }));
+
+    expect(await screen.findByText(/2 words match/i)).toBeInTheDocument();
+    expect(screen.getByText("stone")).toBeInTheDocument();
+    expect(screen.getByText("store")).toBeInTheDocument();
+    expect(screen.queryByText("scone")).not.toBeInTheDocument();
+  });
+
+  it("rejects a letter in the excluded field that's already known to be in the answer", async () => {
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["stone"])));
+    const user = userEvent.setup();
+    render(<FindAWordle />);
+
+    await screen.findByText(/words loaded/i);
+    await user.type(letterBox(1), "s");
+    await user.type(excludedField(), "s");
+    expect(excludedField()).toHaveValue("");
+  });
+
+  it("drops a letter from the excluded field once it's placed in the grid", async () => {
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["stone"])));
+    const user = userEvent.setup();
+    render(<FindAWordle />);
+
+    await screen.findByText(/words loaded/i);
+    await user.type(excludedField(), "s");
+    expect(excludedField()).toHaveValue("S");
+
+    await user.type(letterBox(1), "s");
+    expect(excludedField()).toHaveValue("");
   });
 });

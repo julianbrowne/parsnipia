@@ -28,13 +28,15 @@ export interface WordStore {
    * `findMatches`, `?` stands in for a letter in an unknown position —
    * that also contain every letter in `requiredLetters` at least as
    * many times as it appears there (duplicates count, e.g.
-   * `requiredLetters` of "ee" needs two E's somewhere in the word).
-   * Built for the Wordle solver: `pattern` captures letters known to be
-   * in a specific position, `requiredLetters` captures letters known to
-   * be in the word but not which position. Matches must be the same
-   * length as `pattern`. Returned in alphabetical order.
+   * `requiredLetters` of "ee" needs two E's somewhere in the word), and
+   * that contain none of the letters in `excludedLetters`. Built for the
+   * Wordle solver: `pattern` captures letters known to be in a specific
+   * position, `requiredLetters` captures letters known to be in the word
+   * but not which position, and `excludedLetters` captures letters known
+   * not to be in the word at all. Matches must be the same length as
+   * `pattern`. Returned in alphabetical order.
    */
-  findWordleMatches(pattern: string, requiredLetters: string): string[];
+  findWordleMatches(pattern: string, requiredLetters: string, excludedLetters?: string): string[];
 }
 
 /** A dictionary word found running contiguously through a sentence's letters. */
@@ -98,6 +100,22 @@ function containsRequiredLetters(word: string, required: Map<string, number>): b
 }
 
 /**
+ * Whether `word` contains any letter from `excluded`. An empty `excluded`
+ * set rules out nothing.
+ */
+function containsExcludedLetter(word: string, excluded: Set<string>): boolean {
+  if (excluded.size === 0) {
+    return false;
+  }
+  for (const char of word) {
+    if (excluded.has(char)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Parses the word list file format: one lowercase word per line, with
  * blank lines and `#`-prefixed comment lines ignored.
  */
@@ -155,13 +173,19 @@ export function createWordStore(words: Set<string>): WordStore {
       const candidates = wordsByLength.get(normalized.length) ?? [];
       return candidates.filter((word) => containsRequiredLetters(word, required)).sort();
     },
-    findWordleMatches(pattern: string, requiredLetters: string) {
+    findWordleMatches(pattern: string, requiredLetters: string, excludedLetters = "") {
       const normalizedPattern = normalizeWord(pattern);
       const regexp = patternToRegExp(normalizedPattern);
       const required = countLetters(normalizeWord(requiredLetters));
+      const excluded = new Set(normalizeWord(excludedLetters));
       const candidates = wordsByLength.get(normalizedPattern.length) ?? [];
       return candidates
-        .filter((word) => regexp.test(word) && containsRequiredLetters(word, required))
+        .filter(
+          (word) =>
+            regexp.test(word) &&
+            containsRequiredLetters(word, required) &&
+            !containsExcludedLetter(word, excluded),
+        )
         .sort();
     },
   };
