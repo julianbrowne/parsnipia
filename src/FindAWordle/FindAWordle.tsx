@@ -21,6 +21,22 @@ function removeFirstOccurrence(text: string, char: string): string {
   return index === -1 ? text : text.slice(0, index) + text.slice(index + 1);
 }
 
+/**
+ * Moves focus to the next focusable control after `current` within its
+ * form, the same control Tab would land on — used so pressing space in
+ * the last letter box can hand off focus without actually simulating a
+ * Tab keypress.
+ */
+function focusNextFocusable(current: HTMLElement) {
+  const form = current.closest("form");
+  if (!form) return;
+  const focusable = Array.from(
+    form.querySelectorAll<HTMLElement>("input, button, select, textarea"),
+  ).filter((element) => !element.hasAttribute("disabled"));
+  const next = focusable[focusable.indexOf(current) + 1];
+  next?.focus();
+}
+
 export function FindAWordle() {
   const loadState = useAsyncStore<WordStore>(loadWordStore, "Failed to load the word list.");
   const [letters, setLetters] = useState<string[]>(() => Array(WORD_LENGTH).fill(""));
@@ -67,6 +83,17 @@ export function FindAWordle() {
   function handleLetterKeyDown(index: number, event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Backspace" && letters[index] === "" && index > 0) {
       boxRefs.current[index - 1]?.focus();
+    }
+
+    if (event.key === " ") {
+      // Space just advances focus — it's never a letter, so don't let it
+      // land in the box.
+      event.preventDefault();
+      if (index < WORD_LENGTH - 1) {
+        boxRefs.current[index + 1]?.focus();
+      } else {
+        focusNextFocusable(event.currentTarget);
+      }
     }
   }
 

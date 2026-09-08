@@ -89,6 +89,30 @@ describe("FindAWordle", () => {
     expect(letterBox(1)).toHaveFocus();
   });
 
+  it("advances focus without entering a space when Space is pressed in a box", async () => {
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["stone"])));
+    const user = userEvent.setup();
+    render(<FindAWordle />);
+
+    await screen.findByText(/words loaded/i);
+    letterBox(1).focus();
+    await user.keyboard(" ");
+    expect(letterBox(1)).toHaveValue("");
+    expect(letterBox(2)).toHaveFocus();
+  });
+
+  it("advances to the next input once Space is pressed in the last box", async () => {
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["stone"])));
+    const user = userEvent.setup();
+    render(<FindAWordle />);
+
+    await screen.findByText(/words loaded/i);
+    letterBox(5).focus();
+    await user.keyboard(" ");
+    expect(letterBox(5)).toHaveValue("");
+    expect(unknownField()).toHaveFocus();
+  });
+
   it("removes a letter from the unknown-position field once it's placed in the grid", async () => {
     mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["stone"])));
     const user = userEvent.setup();
