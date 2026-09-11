@@ -123,11 +123,24 @@ describe("WordLookup", () => {
     await user.type(screen.getByRole("textbox"), "cat");
     await user.click(screen.getByRole("button", { name: /check/i }));
 
-    expect(await screen.findByText(/3 words are anagrams of/i)).toBeInTheDocument();
+    expect(await screen.findByText(/2 words are anagrams of/i)).toBeInTheDocument();
     expect(screen.getByText("act")).toBeInTheDocument();
-    expect(screen.getByText("cat")).toBeInTheDocument();
     expect(screen.getByText("tac")).toBeInTheDocument();
+    expect(screen.queryByText("cat")).not.toBeInTheDocument();
     expect(screen.queryByText("dog")).not.toBeInTheDocument();
+  });
+
+  it("doesn't list the entered word itself as one of its own anagrams", async () => {
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["cat"])));
+    const user = userEvent.setup();
+    render(<WordLookup />);
+
+    await screen.findByText(/words loaded/i);
+    await user.click(screen.getByRole("radio", { name: "Anagram" }));
+    await user.type(screen.getByRole("textbox"), "cat");
+    await user.click(screen.getByRole("button", { name: /check/i }));
+
+    expect(await screen.findByText(/no anagrams found/i)).toBeInTheDocument();
   });
 
   it("treats ? as a wildcard letter when finding anagrams", async () => {

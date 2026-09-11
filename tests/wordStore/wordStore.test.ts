@@ -107,15 +107,25 @@ describe("findAnagrams", () => {
   );
 
   it("finds every rearrangement of the exact letters when there are no wildcards", () => {
-    expect(store.findAnagrams("cat")).toEqual(["act", "cat", "tac"]);
+    expect(store.findAnagrams("cat")).toEqual(["act", "tac"]);
   });
 
   it("is case-insensitive", () => {
-    expect(store.findAnagrams("CAT")).toEqual(["act", "cat", "tac"]);
+    expect(store.findAnagrams("CAT")).toEqual(["act", "tac"]);
   });
 
   it("only matches words of the same length", () => {
-    expect(store.findAnagrams("cats")).toEqual(["cast", "cats"]);
+    expect(store.findAnagrams("cats")).toEqual(["cast"]);
+  });
+
+  it("excludes the input word itself from the results", () => {
+    const store2 = createWordStore(new Set(["cat"]));
+    expect(store2.findAnagrams("cat")).toEqual([]);
+  });
+
+  it("doesn't exclude a word matching a wildcard pattern, even if it equals the pattern's letters", () => {
+    // "c?t" isn't itself a plain word, so nothing is excluded on that basis
+    expect(store.findAnagrams("c?t")).toContain("cat");
   });
 
   it("treats ? as a wildcard letter that can be anything", () => {

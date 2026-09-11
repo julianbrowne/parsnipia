@@ -18,9 +18,10 @@ export interface WordStore {
   findMatches(pattern: string): string[];
   /**
    * All known words (case-insensitively) that can be formed by
-   * rearranging `letters`, where `?` stands in for any single letter.
-   * Matches must be the same length as `letters`. Returned in
-   * alphabetical order.
+   * rearranging `letters`, where `?` stands in for any single letter,
+   * excluding `letters` itself when it's already a plain word (no `?`
+   * wildcards). Matches must be the same length as `letters`. Returned
+   * in alphabetical order.
    */
   findAnagrams(letters: string): string[];
   /**
@@ -171,7 +172,9 @@ export function createWordStore(words: Set<string>): WordStore {
       const normalized = normalizeWord(letters);
       const required = countLetters(normalized.replace(/\?/g, ""));
       const candidates = wordsByLength.get(normalized.length) ?? [];
-      return candidates.filter((word) => containsRequiredLetters(word, required)).sort();
+      return candidates
+        .filter((word) => word !== normalized && containsRequiredLetters(word, required))
+        .sort();
     },
     findWordleMatches(pattern: string, requiredLetters: string, excludedLetters = "") {
       const normalizedPattern = normalizeWord(pattern);
