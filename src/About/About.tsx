@@ -17,9 +17,9 @@ export function About() {
           a bonus parsnip thrown in. No, it does not make any sense.
         </p>
         <p>
-          The parsnipia is a handy all-in-one tool for solving crosswords, 
-          created because all the others on the web seemed to have far too many
-          ads or didn't quite have the right features (like search for thesaurus
+          The parsnipia is a handy all-in-one tool for solving word puzzles. It
+          was created because all the others on the web have far too many
+          ads or are missing useful features (like search for thesaurus
           entries by length of word).
         </p>
         <p>
