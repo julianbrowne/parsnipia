@@ -65,6 +65,13 @@
   outline-offset: 1px;
 }
 
+.word-lookup__char-count {
+  display: flex;
+  align-items: center;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
 .word-lookup__mode {
   display: flex;
   gap: 20px;

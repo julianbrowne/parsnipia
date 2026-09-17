@@ -175,6 +175,21 @@ describe("WordLookup", () => {
     expect(await screen.findByText(/no anagrams found/i)).toBeInTheDocument();
   });
 
+  it("counts characters as they're typed and deleted", async () => {
+    mockedLoadWordStore.mockResolvedValue(createWordStore(new Set(["parsnip"])));
+    const user = userEvent.setup();
+    render(<WordLookup />);
+
+    await screen.findByText(/words loaded/i);
+    expect(screen.getByText("(0)")).toBeInTheDocument();
+
+    await user.type(screen.getByRole("textbox"), "par");
+    expect(screen.getByText("(3)")).toBeInTheDocument();
+
+    await user.keyboard("{Backspace}");
+    expect(screen.getByText("(2)")).toBeInTheDocument();
+  });
+
   it("shows an error if the dictionary fails to load", async () => {
     mockedLoadWordStore.mockRejectedValue(new Error("network down"));
     render(<WordLookup />);

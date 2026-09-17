@@ -84,6 +84,9 @@ export function WordLookup() {
             autoCapitalize="off"
             spellCheck={false}
           />
+          <span className="word-lookup__char-count" aria-hidden="true">
+            ({input.length})
+          </span>
           <button type="submit" className="word-lookup__submit" disabled={!isReady}>
             Check
           </button>
