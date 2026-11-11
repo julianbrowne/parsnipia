@@ -152,6 +152,7 @@ export function FindAWordle() {
   return (
     <div className="find-a-wordle">
       <form className="find-a-wordle__form" onSubmit={handleSubmit} noValidate>
+        <p className="find-a-wordle__hint">enter known letters in known positions</p>
         <fieldset className="find-a-wordle__grid" disabled={!isReady}>
           <legend className="visually-hidden">Letters in a known position</legend>
           {letters.map((letter, index) => (

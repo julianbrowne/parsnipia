@@ -579,6 +579,13 @@
   gap: 12px;
 }
 
+.find-a-wordle__hint {
+  margin: 0 0 -4px;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text);
+}
+
 .find-a-wordle__grid {
   display: flex;
   gap: 8px;
