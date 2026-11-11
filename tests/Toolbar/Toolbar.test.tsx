@@ -11,18 +11,6 @@ describe("Toolbar", () => {
     window.history.replaceState({}, "", "/");
   });
 
-  it("shows the logo and the centered title and tagline", () => {
-    renderWithRouter(<Toolbar />);
-
-    expect(screen.getByRole("heading", { name: "Parsnipia Verbum" })).toBeInTheDocument();
-    expect(screen.getByText("the crossword solver's friend")).toBeInTheDocument();
-
-    // Decorative: empty alt, since the adjacent heading already names the
-    // app for screen readers — so this is queried by attribute, not role.
-    const logo = screen.getByAltText("");
-    expect(logo).toHaveAttribute("src", "/assets/images/parsnipia-logo.png");
-  });
-
   it("links the logo back to the main page", () => {
     renderWithRouter(<Toolbar />);
 

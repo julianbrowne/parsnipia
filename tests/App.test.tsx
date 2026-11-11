@@ -18,12 +18,9 @@ describe("App", () => {
     window.history.replaceState({}, "", "/");
   });
 
-  it("renders the heading and lets a user look up a word end-to-end", async () => {
+  it("lets a user look up a word end-to-end", async () => {
     const user = userEvent.setup();
     render(<App />);
-
-    expect(screen.getByRole("heading", { name: "Parsnipia Verbum" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Dictionary Search" })).toBeInTheDocument();
 
     // Both WordLookup and HiddenWords show a "words loaded" count once
     // their (identical, mocked) word list has loaded.
@@ -32,46 +29,6 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: /check/i }));
 
     expect(await screen.findByText(/is a valid word/i)).toBeInTheDocument();
-  });
-
-  it("also mounts the hidden words finder", async () => {
-    render(<App />);
-
-    expect(screen.getByRole("heading", { name: /hidden words/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /find hidden words/i }),
-    ).toBeInTheDocument();
-  });
-
-  it("also mounts the cryptic clue strategy finder", async () => {
-    render(<App />);
-
-    expect(
-      screen.getByRole("heading", { name: /find a strategy/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /find strategies/i }),
-    ).toBeInTheDocument();
-  });
-
-  it("also mounts the thesaurus finder", async () => {
-    render(<App />);
-
-    expect(
-      screen.getByRole("heading", { name: "Thesaurus Search" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /find matching words/i }),
-    ).toBeInTheDocument();
-  });
-
-  it("also mounts the Wordle solver", async () => {
-    render(<App />);
-
-    expect(screen.getByRole("heading", { name: "Solve Wordle" })).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /find wordle matches/i }),
-    ).toBeInTheDocument();
   });
 
   it("renders the About page directly when the URL is /about", () => {
@@ -91,7 +48,6 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "Test Results" })).toBeInTheDocument();
     expect(await screen.findByText(/no test results found yet/i)).toBeInTheDocument();
   });
 

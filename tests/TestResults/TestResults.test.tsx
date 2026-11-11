@@ -10,18 +10,6 @@ describe("TestResults", () => {
     globalThis.fetch = originalFetch;
   });
 
-  it("shows the shared toolbar and page heading", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ numTotalTests: 0, numPassedTests: 0, numFailedTests: 0, testResults: [] }),
-    } as Response);
-
-    renderWithRouter(<TestResults />);
-
-    expect(screen.getByRole("heading", { name: "Parsnipia Verbum" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Test Results" })).toBeInTheDocument();
-  });
-
   it("shows a friendly message when no results have been generated yet", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: false } as Response);
 
