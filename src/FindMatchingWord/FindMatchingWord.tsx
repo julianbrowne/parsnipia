@@ -5,6 +5,7 @@ import {
 } from "../thesaurusStore/thesaurusStore";
 import { normalizeWord } from "../wordStore/wordStore";
 import { useAsyncStore } from "../useAsyncStore/useAsyncStore";
+import { ClearableInput } from "../ClearableInput/ClearableInput";
 
 type Result = { word: string; length?: number; synonyms: string[] } | null;
 
@@ -61,7 +62,7 @@ export function FindMatchingWord() {
           <label htmlFor="find-matching-word-input" className="visually-hidden">
             Word to find matches for
           </label>
-          <input
+          <ClearableInput
             id="find-matching-word-input"
             className="find-matching-word__input"
             type="text"
@@ -72,6 +73,7 @@ export function FindMatchingWord() {
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}
+            onClear={() => setInput("")}
           />
           <label htmlFor="find-matching-word-length" className="visually-hidden">
             Word length (optional)

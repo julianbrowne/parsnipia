@@ -116,3 +116,51 @@ code {
   white-space: nowrap;
   border: 0;
 }
+
+/* Wrapper takes the input's place in its flex row; the input fills it. */
+.clearable-input {
+  position: relative;
+  display: grid;
+  flex: 1;
+  min-width: 0;
+
+  @media (max-width: 600px) {
+    flex-basis: 100%;
+  }
+}
+
+.clearable-input > input {
+  min-width: 0;
+  padding-right: 36px;
+}
+
+/* iOS-style clear button: small grey disc with a white cross. */
+.clearable-input__clear {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--text);
+  opacity: 0.6;
+  color: var(--bg);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.clearable-input__clear:hover {
+  opacity: 0.8;
+}
+
+.clearable-input__clear svg {
+  width: 10px;
+  height: 10px;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+}

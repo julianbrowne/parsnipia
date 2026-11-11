@@ -1,6 +1,7 @@
 import { useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { loadWordStore, type WordStore } from "../wordStore/wordStore";
 import { useAsyncStore } from "../useAsyncStore/useAsyncStore";
+import { ClearableInput } from "../ClearableInput/ClearableInput";
 
 /** Wordle words are always exactly this many letters. */
 const WORD_LENGTH = 5;
@@ -180,7 +181,7 @@ export function FindAWordle() {
           <label htmlFor="find-a-wordle-unknown" className="visually-hidden">
             Known letters with an unknown position
           </label>
-          <input
+          <ClearableInput
             id="find-a-wordle-unknown"
             className="find-a-wordle__unknown"
             type="text"
@@ -191,6 +192,7 @@ export function FindAWordle() {
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}
+            onClear={() => handleUnknownLettersChange("")}
           />
         </div>
 
@@ -198,7 +200,7 @@ export function FindAWordle() {
           <label htmlFor="find-a-wordle-excluded" className="visually-hidden">
             Letters known not to be in the answer
           </label>
-          <input
+          <ClearableInput
             id="find-a-wordle-excluded"
             className="find-a-wordle__unknown"
             type="text"
@@ -209,6 +211,7 @@ export function FindAWordle() {
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}
+            onClear={() => handleExcludedLettersChange("")}
           />
           <button type="submit" className="find-a-wordle__submit" disabled={!isReady}>
             Find Wordle matches

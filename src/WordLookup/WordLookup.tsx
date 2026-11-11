@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { loadWordStore, normalizeWord, type WordStore } from "../wordStore/wordStore";
 import { useAsyncStore } from "../useAsyncStore/useAsyncStore";
+import { ClearableInput } from "../ClearableInput/ClearableInput";
 
 /**
  * The operation the Check button performs, chosen from the radio group.
@@ -72,7 +73,7 @@ export function WordLookup() {
           <label htmlFor="word-input" className="visually-hidden">
             Word to look up
           </label>
-          <input
+          <ClearableInput
             id="word-input"
             className="word-lookup__input"
             type="text"
@@ -83,6 +84,7 @@ export function WordLookup() {
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}
+            onClear={() => setInput("")}
           />
           <span className="word-lookup__char-count" aria-hidden="true">
             ({input.length})

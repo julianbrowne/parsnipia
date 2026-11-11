@@ -13,7 +13,7 @@ export function HomePage() {
       <Toolbar />
       <main className="page">
         <section className="feature-section">
-          <h2 className="section-heading">Find A Word</h2>
+          <h2 className="section-heading">Dictionary Search</h2>
           <WordLookup />
         </section>
         <section className="feature-section">
@@ -25,11 +25,11 @@ export function HomePage() {
           <CrypticClue />
         </section>
         <section className="feature-section">
-          <h2 className="section-heading">Find A Matching Word</h2>
+          <h2 className="section-heading">Thesaurus Search</h2>
           <FindMatchingWord />
         </section>
         <section className="feature-section">
-          <h2 className="section-heading">Find a Wordle</h2>
+          <h2 className="section-heading">Solve Wordle</h2>
           <FindAWordle />
         </section>
       </main>

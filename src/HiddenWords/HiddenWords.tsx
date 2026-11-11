@@ -6,6 +6,7 @@ import {
   type HiddenWordMatch,
 } from "../wordStore/wordStore";
 import { useAsyncStore } from "../useAsyncStore/useAsyncStore";
+import { ClearableInput } from "../ClearableInput/ClearableInput";
 
 type Result = { sentence: string; matches: HiddenWordMatch[] } | null;
 
@@ -72,7 +73,7 @@ export function HiddenWords() {
           <label htmlFor="hidden-words-sentence" className="visually-hidden">
             Sentence to search
           </label>
-          <input
+          <ClearableInput
             id="hidden-words-sentence"
             className="hidden-words__input"
             type="text"
@@ -83,6 +84,7 @@ export function HiddenWords() {
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}
+            onClear={() => setSentence("")}
           />
           <label htmlFor="hidden-words-length" className="visually-hidden">
             Word length

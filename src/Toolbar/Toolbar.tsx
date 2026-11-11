@@ -52,7 +52,7 @@ export function Toolbar() {
 
         <div className="toolbar__center">
           <h1 className="toolbar__title">Parsnipia Verbum</h1>
-          <p className="toolbar__tagline">the crossword solver's friend</p>
+          <p className="toolbar__tagline">the word puzzler's friend</p>
         </div>
 
         <div className="toolbar__end" ref={menuRef}>

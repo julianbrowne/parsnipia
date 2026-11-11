@@ -13,6 +13,7 @@ import {
   type SubstitutionMatch,
 } from "../substitutionStore/substitutionStore";
 import { useAsyncStore } from "../useAsyncStore/useAsyncStore";
+import { ClearableInput } from "../ClearableInput/ClearableInput";
 
 type Result = {
   tokens: string[];
@@ -85,7 +86,7 @@ export function CrypticClue() {
         <label htmlFor="clue-input" className="visually-hidden">
           Cryptic clue
         </label>
-        <input
+        <ClearableInput
           id="clue-input"
           className="cryptic-clue__input"
           type="text"
@@ -96,6 +97,7 @@ export function CrypticClue() {
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
+          onClear={() => setInput("")}
         />
         <button type="submit" className="cryptic-clue__submit" disabled={!isReady}>
           Find strategies

@@ -23,8 +23,7 @@ describe("App", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { name: "Parsnipia Verbum" })).toBeInTheDocument();
-    // Not /find a word/i: that also matches the "Find a Wordle" heading.
-    expect(screen.getByRole("heading", { name: "Find A Word" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Dictionary Search" })).toBeInTheDocument();
 
     // Both WordLookup and HiddenWords show a "words loaded" count once
     // their (identical, mocked) word list has loaded.
@@ -59,7 +58,7 @@ describe("App", () => {
     render(<App />);
 
     expect(
-      screen.getByRole("heading", { name: /find a matching word/i }),
+      screen.getByRole("heading", { name: "Thesaurus Search" }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /find matching words/i }),
@@ -69,7 +68,7 @@ describe("App", () => {
   it("also mounts the Wordle solver", async () => {
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "Find a Wordle" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Solve Wordle" })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /find wordle matches/i }),
     ).toBeInTheDocument();
