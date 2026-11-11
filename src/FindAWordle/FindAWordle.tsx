@@ -194,9 +194,6 @@ export function FindAWordle() {
             spellCheck={false}
             onClear={() => handleUnknownLettersChange("")}
           />
-        </div>
-
-        <div className="find-a-wordle__row">
           <label htmlFor="find-a-wordle-excluded" className="visually-hidden">
             Letters known not to be in the answer
           </label>
@@ -213,10 +210,11 @@ export function FindAWordle() {
             spellCheck={false}
             onClear={() => handleExcludedLettersChange("")}
           />
-          <button type="submit" className="find-a-wordle__submit" disabled={!isReady}>
-            Find Wordle matches
-          </button>
         </div>
+
+        <button type="submit" className="find-a-wordle__submit" disabled={!isReady}>
+          Find Wordle matches
+        </button>
       </form>
 
       {loadState.status === "loading" && (
