@@ -6,7 +6,7 @@ import { FindMatchingWord } from "../FindMatchingWord/FindMatchingWord";
 import { FindAWordle } from "../FindAWordle/FindAWordle";
 import "./HomePage.css";
 
-/** The main app page: the toolbar plus all four lookup features. */
+/** The main app page: the toolbar plus all five lookup features. */
 export function HomePage() {
   return (
     <>
@@ -17,20 +17,20 @@ export function HomePage() {
           <WordLookup />
         </section>
         <section className="feature-section">
-          <h2 className="section-heading">Find Hidden Words</h2>
-          <HiddenWords />
-        </section>
-        <section className="feature-section">
-          <h2 className="section-heading">Find A Strategy</h2>
-          <CrypticClue />
-        </section>
-        <section className="feature-section">
           <h2 className="section-heading">Thesaurus Search</h2>
           <FindMatchingWord />
         </section>
         <section className="feature-section">
           <h2 className="section-heading">Solve Wordle</h2>
           <FindAWordle />
+        </section>
+        <section className="feature-section">
+          <h2 className="section-heading">Find Hidden Words</h2>
+          <HiddenWords />
+        </section>
+        <section className="feature-section">
+          <h2 className="section-heading">Find A Strategy</h2>
+          <CrypticClue />
         </section>
       </main>
     </>
